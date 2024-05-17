@@ -88,3 +88,12 @@ div {
 .leading-tight {
   line-height: -0.025em;
 }
+
+.bg-primary {
+  background-color: #646cff;
+  color: white;
+}
+
+a {
+  color: #646cff;
+}

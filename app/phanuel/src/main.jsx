@@ -11,14 +11,15 @@ import V0 from './layout/v0';
 import CreateToken from './pages/CreateToken';
 import ManageToken from './pages/ManageToken';
 import Wallet from './pages/Wallet';
+import Intro from './pages/Intro';
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: (
-      <Layout>
-        <Manage />
-      </Layout>
+      <V0>
+        <Intro />
+      </V0>
     ),
   },
   {

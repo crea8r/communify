@@ -27,6 +27,17 @@ const Wallet = () => {
             </div>
             <Button>View Balance</Button>
           </form>
+          <div className='my-2'>Total: 11.3 $STUK</div>
+          <div className='flex-1 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-2'>
+            <div className='flex flex-col gap-2 border p-3 rounded'>
+              <Label>💰 7.5 tokens</Label>
+              <Label>Decay in 15 days</Label>
+            </div>
+            <div className='flex flex-col gap-2 border p-3 rounded'>
+              <Label>💰 3.8 tokens</Label>
+              <Label>Decay in 6 days</Label>
+            </div>
+          </div>
         </CardContent>
       </Card>
       <Card>

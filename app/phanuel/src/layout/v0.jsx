@@ -4,7 +4,7 @@
  * @see https://v0.dev/t/JV1TCqpNIgN
  * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
  */
-import { Button, MountainIcon } from '../components/ui';
+import { MountainIcon } from '../components/ui';
 
 const V0 = (props) => {
   return (
@@ -14,11 +14,11 @@ const V0 = (props) => {
           <div className='flex items-center gap-2'>
             <MountainIcon className='h-6 w-6 text-gray-600 dark:text-gray-400' />
             <h1 className='text-xl font-semibold text-gray-800 dark:text-gray-200'>
-              Community Dashboard
+              Community Bloodline
             </h1>
           </div>
           <div className='flex items-center gap-4'>
-            <Button className='rounded-full' size='icon' variant='ghost'>
+            <div className='rounded-full'>
               <img
                 alt='Avatar'
                 className='rounded-full border'
@@ -31,7 +31,7 @@ const V0 = (props) => {
                 width='32'
               />
               <span className='sr-only'>Toggle user menu</span>
-            </Button>
+            </div>
           </div>
         </div>
       </header>
