@@ -3,7 +3,6 @@ import * as ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import './index.css';
 import './output.css';
-import Manage from './pages/Manage';
 import Signatures from './pages/Signatures';
 import Layout from './layout/main';
 import Draft from './pages/Draft';

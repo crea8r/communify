@@ -96,4 +96,8 @@ div {
 
 a {
   color: #646cff;
+  text-decoration: underline;
+}
+.bg-white {
+  color: #213547;
 }

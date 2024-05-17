@@ -12,21 +12,21 @@ const Intro = () => {
       <div className='font-bold'>Usecases:</div>
       <div>
         -{' '}
-        <a href='/create-token' target='_blank'>
+        <a className='underline' href='/create-token' target='_blank'>
           Create token
         </a>
         : Name & Decay time
       </div>
       <div>
         -{' '}
-        <a href='/manage-token' target='_blank'>
+        <a className='underline' href='/manage-token' target='_blank'>
           Manage community
         </a>
         : Add / Remove Members; Mint Token to members
       </div>
       <div>
         -{' '}
-        <a href='/wallet' target='_blank'>
+        <a className='underline' href='/wallet' target='_blank'>
           View & Transfer
         </a>{' '}
         tokens to other community members
@@ -48,6 +48,16 @@ const Intro = () => {
             here
           </a>
         </div>
+      </div>
+      <div className='my-2'>
+        Program Address (and idl):{' '}
+        <a
+          className='underline'
+          href='https://solscan.io/account/Pha5A3BB4xKRZDs8ycvukFUagaKvk3AQBaH3J5qwAok?cluster=devnet#anchorProgramIdl'
+          target='_blank'
+        >
+          Pha5A3BB4xKRZDs8ycvukFUagaKvk3AQBaH3J5qwAok
+        </a>
       </div>
     </div>
   );
