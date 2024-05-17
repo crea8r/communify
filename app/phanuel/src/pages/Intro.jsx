@@ -9,7 +9,7 @@ const Intro = () => {
           This is an anti-hoarding token.
         </p>
       </div>
-      <div className='font-bold'>Usecases:</div>
+      <div className='font-bold'>Usecases (Mockup only):</div>
       <div>
         -{' '}
         <a className='underline' href='/create-token' target='_blank'>
