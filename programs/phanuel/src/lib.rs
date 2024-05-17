@@ -6,7 +6,7 @@ declare_id!("Pha5A3BB4xKRZDs8ycvukFUagaKvk3AQBaH3J5qwAok");
 pub mod phanuel {
 	use super::*;
 	
-	pub fn create(ctx: Context<CreateCtx>, symbol: [u8; 3], decay_after: u64) -> Result<()> {
+	pub fn create(ctx: Context<CreateCtx>, symbol: String, decay_after: u64) -> Result<()> {
 		let community_account = &mut ctx.accounts.community_account;
 		community_account.symbol = symbol;
 		community_account.decay_after = decay_after;
@@ -87,7 +87,9 @@ pub enum ErrorCode {
 
 #[derive(Accounts)]
 pub struct CreateCtx<'info> {
-	#[account(init, payer = admin, space = 8 + CommunityAccount::INIT_SPACE)]
+	#[account(init, payer = admin, 
+		seeds=[b"MINT", admin.key().as_ref()], bump,
+		space = 8 + CommunityAccount::INIT_SPACE)]
 	pub community_account: Account<'info, CommunityAccount>,
 	#[account(mut)]
 	pub admin: Signer<'info>,
@@ -103,7 +105,8 @@ pub struct MintToCtx<'info> {
 	pub admin: Signer<'info>,
 	#[account(init, payer = admin, 
 		seeds=[b"Bag", member_info.key().as_ref(), &member_info.max.to_le_bytes()], bump, 
-		space=8 + Bag::INIT_SPACE, has_one = member, owner = phanuel_program.key.clone())]
+		space=8 + Bag::INIT_SPACE, 
+		owner = phanuel_program.key.clone())]
 	pub bag: Account<'info, Bag>,
 	#[account(mut, has_one = member)]
 	pub member_info: Account<'info, MemberInfo>,
@@ -122,7 +125,7 @@ pub struct AddMemberCtx<'info> {
 	#[account(init, payer = admin, 
 		seeds=[b"User", community_account.key().as_ref(), member.key().as_ref()], bump,
 		space = 8 + MemberInfo::INIT_SPACE,
-		has_one = member, owner = phanuel_program.key.clone())]
+		owner = phanuel_program.key.clone())]
 	pub member_info: Account<'info, MemberInfo>,
 	#[account(mut)]
 	pub admin: Signer<'info>,
@@ -136,12 +139,14 @@ pub struct AddMemberCtx<'info> {
 
 #[derive(Accounts)]
 pub struct CloseMemberCtx<'info>{
-	#[account(mut, close = admin)]
-	account: Account<'info, MemberInfo>,
+	#[account(mut, close = admin, has_one = member)]
+	member_info: Account<'info, MemberInfo>,
 	#[account(has_one = admin)]
 	community_account: Account<'info, CommunityAccount>,
 	#[account(mut)]
 	admin: Signer<'info>,
+	/// CHECK: community member, checked in the member_info account
+	member: AccountInfo<'info>,
 }
 
 #[derive(Accounts)]
@@ -154,7 +159,7 @@ pub struct TransferCtx<'info> {
 	pub receiver_info: Account<'info, MemberInfo>,
 	#[account(init, payer = sender, 
 		seeds=[b"Bag", receiver_info.key().as_ref(), &receiver_info.max.to_le_bytes()], bump, 
-		space=8 + Bag::INIT_SPACE, has_one = member, owner = phanuel_program.key.clone())]
+		space=8 + Bag::INIT_SPACE, owner = phanuel_program.key.clone())]
 	pub bag: Account<'info, Bag>,
 	pub community_account: Account<'info, CommunityAccount>,
 	pub system_program: Program<'info, System>,
@@ -176,9 +181,10 @@ pub struct CloseBagCtx<'info>{
 #[account]
 #[derive(InitSpace)]
 pub struct CommunityAccount {
-	pub symbol: [u8; 3],
 	pub decay_after: u64,
 	pub admin: Pubkey,
+	#[max_len(5)]
+	pub symbol: String,
 }
 
 #[account]
