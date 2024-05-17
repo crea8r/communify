@@ -148,8 +148,14 @@ describe('phanuel', () => {
     }
   });
   it('Mint token', async () => {
-    const mintAmount = new anchor.BN(1000);
+    const mintAmount = new anchor.BN(700);
     let w1Info;
+    let tokenInfo;
+    try {
+      tokenInfo = await program.account.communityAccount.fetch(TokenPDA);
+    } catch (e) {
+      assert.ok(false, 'Cannot get token');
+    }
     try {
       w1Info = await program.account.memberInfo.fetch(w1PDA);
     } catch (e) {
@@ -180,15 +186,88 @@ describe('phanuel', () => {
       anchor.web3.SYSVAR_CLOCK_PUBKEY
     );
     const clockData = CLOCK_LAYOUT.decode(clockInfo.data);
-    console.log('Clock.unix_timestamp: ', clockData.unix_timestamp.toNumber());
+    // console.log('Clock.unix_timestamp: ', clockData.unix_timestamp.toNumber());
     try {
       const bagInfo = await program.account.bag.fetch(bagPDA);
       assert.equal(bagInfo.amount.toNumber(), mintAmount.toNumber());
-      console.log('decayAt: ', bagInfo.decayAt.toNumber());
+      // console.log('decayAt: ', bagInfo.decayAt.toNumber());
       // check the decayAt is correct
-      // assert.equal(bagInfo.decayAt.toNumber() - clockData.unix_timestamp.toNumber(), clockData.unix_timestamp);
+      assert.equal(
+        bagInfo.decayAt.toNumber() - clockData.unix_timestamp.toNumber(),
+        tokenInfo.decayAfter.toNumber()
+      );
     } catch (e) {
       assert.ok(false, 'Cannot mint');
+    }
+  });
+  it('Transfer token', async () => {
+    const w1Info = await program.account.memberInfo.fetch(w1PDA);
+    assert.equal(w1Info.max.toNumber(), 1, 'Should have a bag here, max = 1');
+    // take the previous minted bag
+    let [w1bagPDA] = anchor.web3.PublicKey.findProgramAddressSync(
+      [
+        Buffer.from('Bag'),
+        w1PDA.toBuffer(),
+        new anchor.BN(0).toArrayLike(Buffer, 'le', 8),
+      ],
+      program.programId
+    );
+    // add w2
+    await program.methods
+      .addMember()
+      .accounts({
+        communityAccount: TokenPDA,
+        memberInfo: w2PDA,
+        admin: admin.publicKey,
+        member: w2.publicKey,
+        phanuelProgram: program.programId,
+      })
+      .signers([admin])
+      .rpc();
+    // w1 send 100 token to w2
+    const w2Info = await program.account.memberInfo.fetch(w2PDA);
+    const toSendAmount = new anchor.BN(300);
+
+    let [w2bagPDA] = anchor.web3.PublicKey.findProgramAddressSync(
+      [
+        Buffer.from('Bag'),
+        w2PDA.toBuffer(),
+        new anchor.BN(w2Info.max).toArrayLike(Buffer, 'le', 8),
+      ],
+      program.programId
+    );
+    // substract 100 from w1bagPDA, create new w2bagPDA with 100 and a new decayAt
+    await program.methods
+      .transfer([new anchor.BN(toSendAmount)])
+      .accounts({
+        sender: w1.publicKey,
+        member: w2.publicKey,
+        receiverInfo: w2PDA,
+        bag: w2bagPDA,
+        communityAccount: TokenPDA,
+        phanuelProgram: program.programId,
+        clock: anchor.web3.SYSVAR_CLOCK_PUBKEY,
+      })
+      .remainingAccounts([
+        {
+          pubkey: w1bagPDA,
+          isWritable: true,
+          isSigner: false,
+        },
+      ])
+      .signers([w1])
+      .rpc();
+    try {
+      const w1bagInfo = await program.account.bag.fetch(w1bagPDA);
+      const w2bagInfo = await program.account.bag.fetch(w2bagPDA);
+      // assert.equal(w1bagInfo.amount.toNumber(), 900);
+      assert.equal(w2bagInfo.amount.toNumber(), toSendAmount.toNumber());
+      console.log('w1bagInfo.decayAt: ', w1bagInfo.decayAt.toNumber());
+      console.log('w1bagInfo.amount: ', w1bagInfo.amount.toNumber());
+      console.log('w2bagInfo.decayAt: ', w2bagInfo.decayAt.toNumber());
+      console.log('w2bagInfo.amount: ', w2bagInfo.amount.toNumber());
+    } catch (e) {
+      assert.ok(false, 'Cannot transfer');
     }
   });
 });

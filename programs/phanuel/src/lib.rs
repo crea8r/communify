@@ -1,11 +1,13 @@
 use anchor_lang::{prelude::*};
+pub mod writer;
+use writer::BpfWriter;
 
 declare_id!("Pha5A3BB4xKRZDs8ycvukFUagaKvk3AQBaH3J5qwAok");
 
 #[program]
 pub mod phanuel {
 	use super::*;
-	
+
 	pub fn create(ctx: Context<CreateCtx>, symbol: String, decay_after: u64) -> Result<()> {
 		let community_account = &mut ctx.accounts.community_account;
 		community_account.symbol = symbol;
@@ -39,10 +41,12 @@ pub mod phanuel {
 	pub fn transfer<'c: 'info, 'info>(ctx: Context<'_, '_, 'c, 'info, TransferCtx<'info>>, amount_each_bags: Vec<u64>) -> Result<()> {
 		// bags in the remaining_accounts
 		let bags_iter = &mut ctx.remaining_accounts.iter();
-		let mut total = 0;
-		for amount in amount_each_bags {
-			let mut bag:Account<Bag> = Account::try_from(next_account_info(bags_iter)?).unwrap();
-			if bag.member != *ctx.accounts.member.key {
+		let mut amount_each_bags = amount_each_bags.iter();
+		let mut total: u64 = 0;
+		for account_info in bags_iter {
+			let mut bag: Account<Bag> = Account::try_from_unchecked(account_info).unwrap();
+			let amount = *amount_each_bags.next().unwrap();
+			if bag.member != *ctx.accounts.sender.key {
 				return Err(ErrorCode::InvalidBagOwner.into());
 			}
 			if bag.amount < amount {
@@ -51,10 +55,14 @@ pub mod phanuel {
 			if bag.decay_at < ctx.accounts.clock.unix_timestamp as u64 {
 				return Err(ErrorCode::BagDecayed.into());
 			}
-			bag.amount -= amount;
+			bag.amount = bag.amount - amount;
+			let x = bag.to_account_info();
+			let dst: &mut [u8] = &mut x.try_borrow_mut_data().unwrap();
+			let mut writer: BpfWriter<&mut [u8]> = BpfWriter::new(dst);
+			Bag::try_serialize(&bag, &mut writer)?;
 			total += amount;
 		}
-		// now create a bag for the receiver
+		// // now create a bag for the receiver
 		ctx.accounts.bag.amount = total;
 		ctx.accounts.bag.decay_at = ctx.accounts.clock.unix_timestamp as u64 + ctx.accounts.community_account.decay_after;
 		ctx.accounts.bag.member = *ctx.accounts.member.key;
