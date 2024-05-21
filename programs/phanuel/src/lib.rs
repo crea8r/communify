@@ -191,6 +191,10 @@ pub struct CloseBagCtx<'info>{
 pub struct CommunityAccount {
 	pub decay_after: u64,
 	pub admin: Pubkey,
+	// max_supply is initialized
+	pub max_supply: u64,
+	// everytime new token minted, `minted` will increase till it meet max_supply
+	pub minted: u64,
 	#[max_len(5)]
 	pub symbol: String,
 }

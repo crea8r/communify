@@ -8,8 +8,11 @@ import {
   Input,
   Label,
 } from '../components/ui';
+import { getProgram } from '../funcs/config';
 
 const CreateToken = () => {
+  const program = getProgram();
+  console.log(program);
   return (
     <>
       <Card className='w-full'>

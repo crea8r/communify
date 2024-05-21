@@ -3,8 +3,6 @@ import * as ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import './index.css';
 import './output.css';
-import Signatures from './pages/Signatures';
-import Layout from './layout/main';
 import Draft from './pages/Draft';
 import V0 from './layout/v0';
 import CreateToken from './pages/CreateToken';
@@ -19,14 +17,6 @@ const router = createBrowserRouter([
       <V0>
         <Intro />
       </V0>
-    ),
-  },
-  {
-    path: '/signatures',
-    element: (
-      <Layout>
-        <Signatures />
-      </Layout>
     ),
   },
   {
@@ -59,7 +49,7 @@ const router = createBrowserRouter([
   },
 ]);
 
-ReactDOM.createRoot(document.getElementById('root')).render(
+ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <RouterProvider router={router} />
   </React.StrictMode>

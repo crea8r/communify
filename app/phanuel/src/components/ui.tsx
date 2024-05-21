@@ -1,5 +1,4 @@
-/* eslint-disable react/prop-types */
-export const Button = (props) => {
+export const Button = (props: any) => {
   return (
     <button className='inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2'>
       {props.children}
@@ -7,7 +6,7 @@ export const Button = (props) => {
   );
 };
 
-export const Card = (props) => {
+export const Card = (props: any) => {
   return (
     <div
       className={`rounded-lg border bg-white color-black shadow-sm ${props.className}`}
@@ -17,7 +16,7 @@ export const Card = (props) => {
   );
 };
 
-export const CardTitle = (props) => {
+export const CardTitle = (props: any) => {
   return (
     <h3 className='whitespace-nowrap text-2xl font-semibold leading-none tracking-tight'>
       {props.children}
@@ -25,27 +24,27 @@ export const CardTitle = (props) => {
   );
 };
 
-export const CardDescription = (props) => {
+export const CardDescription = (props: any) => {
   return <p className='text-sm text-gray-500'>{props.children}</p>;
 };
 
-export const CardHeader = (props) => {
+export const CardHeader = (props: any) => {
   // eslint-disable-next-line react/prop-types
   return <div className='flex flex-col space-y-1.5 p-6'>{props.children}</div>;
 };
 
-export const CardContent = (props) => {
+export const CardContent = (props: any) => {
   return <div className='p-6'>{props.children}</div>;
 };
 
-export const Label = (props) => {
+export const Label = (props: any) => {
   return (
     <label className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'>
       {props.children}
     </label>
   );
 };
-export const Input = (props) => {
+export const Input = (props: any) => {
   return (
     <input className='flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 bg-white'>
       {props.children}
@@ -53,7 +52,7 @@ export const Input = (props) => {
   );
 };
 
-export const ActivityIcon = (props) => {
+export const ActivityIcon = (props: any) => {
   return (
     <svg
       {...props}
@@ -72,7 +71,7 @@ export const ActivityIcon = (props) => {
   );
 };
 
-export const MountainIcon = (props) => {
+export const MountainIcon = (props: any) => {
   return (
     <svg
       {...props}
@@ -91,7 +90,7 @@ export const MountainIcon = (props) => {
   );
 };
 
-export const UsersIcon = (props) => {
+export const UsersIcon = (props: any) => {
   return (
     <svg
       {...props}
@@ -113,7 +112,7 @@ export const UsersIcon = (props) => {
   );
 };
 
-export const WalletIcon = (props) => {
+export const WalletIcon = (props: any) => {
   return (
     <svg
       {...props}
