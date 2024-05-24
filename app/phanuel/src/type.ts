@@ -14,6 +14,43 @@ export type Phanuel = {
   },
   "instructions": [
     {
+      "name": "activateMember",
+      "discriminator": [
+        5,
+        114,
+        217,
+        5,
+        226,
+        191,
+        32,
+        133
+      ],
+      "accounts": [
+        {
+          "name": "memberInfo",
+          "writable": true
+        },
+        {
+          "name": "communityAccount"
+        },
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "communityAccount"
+          ]
+        },
+        {
+          "name": "member",
+          "relations": [
+            "memberInfo"
+          ]
+        }
+      ],
+      "args": []
+    },
+    {
       "name": "addMember",
       "discriminator": [
         13,
@@ -76,6 +113,55 @@ export type Phanuel = {
         }
       ],
       "args": []
+    },
+    {
+      "name": "changeAdminAndFee",
+      "discriminator": [
+        23,
+        2,
+        170,
+        87,
+        96,
+        43,
+        111,
+        91
+      ],
+      "accounts": [
+        {
+          "name": "adminAccount",
+          "writable": true
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "adminAccount"
+          ]
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "phanuelProgram",
+          "address": "Pha5A3BB4xKRZDs8ycvukFUagaKvk3AQBaH3J5qwAok"
+        }
+      ],
+      "args": [
+        {
+          "name": "newAdmin",
+          "type": "pubkey"
+        },
+        {
+          "name": "closeBagFee",
+          "type": "u64"
+        },
+        {
+          "name": "createCommunityFee",
+          "type": "u64"
+        }
+      ]
     },
     {
       "name": "closeBag",
@@ -165,6 +251,99 @@ export type Phanuel = {
         },
         {
           "name": "decayAfter",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "disableMember",
+      "discriminator": [
+        77,
+        253,
+        57,
+        92,
+        4,
+        137,
+        31,
+        8
+      ],
+      "accounts": [
+        {
+          "name": "memberInfo",
+          "writable": true
+        },
+        {
+          "name": "communityAccount"
+        },
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "communityAccount"
+          ]
+        },
+        {
+          "name": "member",
+          "relations": [
+            "memberInfo"
+          ]
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "initialize",
+      "discriminator": [
+        175,
+        175,
+        109,
+        31,
+        13,
+        152,
+        155,
+        237
+      ],
+      "accounts": [
+        {
+          "name": "adminAccount",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  65,
+                  68,
+                  77,
+                  73,
+                  78
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "phanuelProgram",
+          "address": "Pha5A3BB4xKRZDs8ycvukFUagaKvk3AQBaH3J5qwAok"
+        }
+      ],
+      "args": [
+        {
+          "name": "closeBagFee",
+          "type": "u64"
+        },
+        {
+          "name": "createCommunityFee",
           "type": "u64"
         }
       ]
@@ -315,6 +494,10 @@ export type Phanuel = {
           "writable": true
         },
         {
+          "name": "senderInfo",
+          "writable": true
+        },
+        {
           "name": "bag",
           "writable": true,
           "pda": {
@@ -366,6 +549,19 @@ export type Phanuel = {
     }
   ],
   "accounts": [
+    {
+      "name": "adminAccount",
+      "discriminator": [
+        153,
+        119,
+        180,
+        178,
+        43,
+        66,
+        235,
+        148
+      ]
+    },
     {
       "name": "bag",
       "discriminator": [
@@ -426,9 +622,34 @@ export type Phanuel = {
       "code": 6003,
       "name": "bagNotDecayed",
       "msg": "Bag not decayed"
+    },
+    {
+      "code": 6004,
+      "name": "invalidMemberStatus",
+      "msg": "Sender or Receiver disabled"
     }
   ],
   "types": [
+    {
+      "name": "adminAccount",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "closeBagFee",
+            "type": "u64"
+          },
+          {
+            "name": "createCommunityFee",
+            "type": "u64"
+          }
+        ]
+      }
+    },
     {
       "name": "bag",
       "type": {
@@ -489,6 +710,10 @@ export type Phanuel = {
           {
             "name": "max",
             "type": "u64"
+          },
+          {
+            "name": "status",
+            "type": "u8"
           }
         ]
       }

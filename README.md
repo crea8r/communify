@@ -16,6 +16,12 @@ Serve community, encourage activity not hoarding.
 
 Read more [here](https://hieub.notion.site/phanuel-Help-Token-aca5e5ecd74c47ff8091456067414bae?pvs=4)
 
+## Scripts
+
+To increase program size: `solana program extend Pha5A3BB4xKRZDs8ycvukFUagaKvk3AQBaH3J5qwAok 10000`
+
+To deploy on devnet: `anchor deploy -p phanuel --provider.cluster devnet`
+
 ### Authors
 
 k2 & Jay, SuperteamUK

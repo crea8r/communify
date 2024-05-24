@@ -12,21 +12,21 @@ const Intro = () => {
       <div className='font-bold'>Usecases (Mockup only):</div>
       <div>
         -{' '}
-        <a className='underline' href='/create-token' target='_blank'>
+        <a className='underline' href='/admin' target='_blank'>
           Create token
         </a>
         : Name & Decay time
       </div>
       <div>
         -{' '}
-        <a className='underline' href='/manage-token' target='_blank'>
+        <a className='underline' href='/admin' target='_blank'>
           Manage community
         </a>
         : Add / Remove Members; Mint Token to members
       </div>
       <div>
         -{' '}
-        <a className='underline' href='/wallet' target='_blank'>
+        <a className='underline' href='/member' target='_blank'>
           View & Transfer
         </a>{' '}
         tokens to other community members

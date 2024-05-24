@@ -8,6 +8,43 @@
   },
   "instructions": [
     {
+      "name": "activate_member",
+      "discriminator": [
+        5,
+        114,
+        217,
+        5,
+        226,
+        191,
+        32,
+        133
+      ],
+      "accounts": [
+        {
+          "name": "member_info",
+          "writable": true
+        },
+        {
+          "name": "community_account"
+        },
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "community_account"
+          ]
+        },
+        {
+          "name": "member",
+          "relations": [
+            "member_info"
+          ]
+        }
+      ],
+      "args": []
+    },
+    {
       "name": "add_member",
       "discriminator": [
         13,
@@ -70,6 +107,55 @@
         }
       ],
       "args": []
+    },
+    {
+      "name": "change_admin_and_fee",
+      "discriminator": [
+        23,
+        2,
+        170,
+        87,
+        96,
+        43,
+        111,
+        91
+      ],
+      "accounts": [
+        {
+          "name": "admin_account",
+          "writable": true
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "admin_account"
+          ]
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "phanuel_program",
+          "address": "Pha5A3BB4xKRZDs8ycvukFUagaKvk3AQBaH3J5qwAok"
+        }
+      ],
+      "args": [
+        {
+          "name": "new_admin",
+          "type": "pubkey"
+        },
+        {
+          "name": "close_bag_fee",
+          "type": "u64"
+        },
+        {
+          "name": "create_community_fee",
+          "type": "u64"
+        }
+      ]
     },
     {
       "name": "close_bag",
@@ -159,6 +245,99 @@
         },
         {
           "name": "decay_after",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "disable_member",
+      "discriminator": [
+        77,
+        253,
+        57,
+        92,
+        4,
+        137,
+        31,
+        8
+      ],
+      "accounts": [
+        {
+          "name": "member_info",
+          "writable": true
+        },
+        {
+          "name": "community_account"
+        },
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "community_account"
+          ]
+        },
+        {
+          "name": "member",
+          "relations": [
+            "member_info"
+          ]
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "initialize",
+      "discriminator": [
+        175,
+        175,
+        109,
+        31,
+        13,
+        152,
+        155,
+        237
+      ],
+      "accounts": [
+        {
+          "name": "admin_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  65,
+                  68,
+                  77,
+                  73,
+                  78
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "phanuel_program",
+          "address": "Pha5A3BB4xKRZDs8ycvukFUagaKvk3AQBaH3J5qwAok"
+        }
+      ],
+      "args": [
+        {
+          "name": "close_bag_fee",
+          "type": "u64"
+        },
+        {
+          "name": "create_community_fee",
           "type": "u64"
         }
       ]
@@ -309,6 +488,10 @@
           "writable": true
         },
         {
+          "name": "sender_info",
+          "writable": true
+        },
+        {
           "name": "bag",
           "writable": true,
           "pda": {
@@ -360,6 +543,19 @@
     }
   ],
   "accounts": [
+    {
+      "name": "AdminAccount",
+      "discriminator": [
+        153,
+        119,
+        180,
+        178,
+        43,
+        66,
+        235,
+        148
+      ]
+    },
     {
       "name": "Bag",
       "discriminator": [
@@ -420,9 +616,34 @@
       "code": 6003,
       "name": "BagNotDecayed",
       "msg": "Bag not decayed"
+    },
+    {
+      "code": 6004,
+      "name": "InvalidMemberStatus",
+      "msg": "Sender or Receiver disabled"
     }
   ],
   "types": [
+    {
+      "name": "AdminAccount",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "close_bag_fee",
+            "type": "u64"
+          },
+          {
+            "name": "create_community_fee",
+            "type": "u64"
+          }
+        ]
+      }
+    },
     {
       "name": "Bag",
       "type": {
@@ -483,6 +704,10 @@
           {
             "name": "max",
             "type": "u64"
+          },
+          {
+            "name": "status",
+            "type": "u8"
           }
         ]
       }

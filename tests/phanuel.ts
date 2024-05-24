@@ -68,6 +68,39 @@ describe('phanuel', () => {
   });
   let decay = new anchor.BN(89890);
 
+  it('Init admin account & change fee', async () => {
+    const [adminPDAAddress] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from('ADMIN')],
+      program.programId
+    );
+    await program.methods
+      .initialize(new anchor.BN(1000), new anchor.BN(10000))
+      .accounts({
+        authority: admin.publicKey,
+        phanuelProgram: program.programId,
+        adminAccount: adminPDAAddress,
+      })
+      .signers([admin])
+      .rpc();
+    let adminPDA;
+    try {
+      adminPDA = await program.account.adminAccount.fetch(adminPDAAddress);
+      assert.equal(adminPDA.authority.toBase58(), admin.publicKey.toBase58());
+      assert.equal(
+        adminPDA.closeBagFee.toNumber(),
+        1000,
+        'close_bag_fee mismatched'
+      );
+      assert.equal(
+        adminPDA.createCommunityFee.toNumber(),
+        10000,
+        'create_community_fee mismatched'
+      );
+    } catch (e) {
+      assert.ok(false, 'Admin account not existed');
+    }
+  });
+
   it('Create token!', async () => {
     let symbol = 'TEST';
     const txn = await program.methods
@@ -108,7 +141,7 @@ describe('phanuel', () => {
       assert.ok(false);
     }
   });
-  it('Remove member', async () => {
+  it('Disable & Remove member', async () => {
     await program.methods
       .addMember()
       .accounts({
@@ -128,6 +161,23 @@ describe('phanuel', () => {
     } catch (e) {
       // console.error('No member, error', e);
       assert.ok(false, 'Cannot add w2');
+    }
+    await program.methods
+      .disableMember()
+      .accounts({
+        communityAccount: TokenPDA,
+        memberInfo: w2PDA,
+        admin: admin.publicKey,
+        member: w2.publicKey,
+      })
+      .signers([admin])
+      .rpc();
+    try {
+      const w2Info = await program.account.memberInfo.fetch(w2PDA);
+      assert.equal(w2Info.status, 1, 'Member is disabled, status is incorrect'); // TODO: check 1 with a static
+    } catch (e) {
+      // console.error('No member, error', e);
+      assert.ok(false, 'w2 disappeared!');
     }
     await program.methods
       .removeMember()
@@ -247,6 +297,7 @@ describe('phanuel', () => {
         communityAccount: TokenPDA,
         phanuelProgram: program.programId,
         clock: anchor.web3.SYSVAR_CLOCK_PUBKEY,
+        senderInfo: w1PDA,
       })
       .remainingAccounts([
         {
