@@ -74,13 +74,14 @@ describe('phanuel', () => {
       [Buffer.from('ADMIN')],
       program.programId
     );
+    const accounts = {
+      authority: admin.publicKey,
+      phanuelProgram: program.programId,
+      adminAccount: adminPDAAddress,
+    };
     await program.methods
       .initialize(new anchor.BN(1000), new anchor.BN(10000))
-      .accounts({
-        authority: admin.publicKey,
-        phanuelProgram: program.programId,
-        adminAccount: adminPDAAddress,
-      })
+      .accounts(accounts)
       .signers([admin])
       .rpc();
     let adminPDA;
@@ -104,12 +105,13 @@ describe('phanuel', () => {
 
   it('Create token!', async () => {
     let symbol = 'TEST';
+    const createAccounts = {
+      communityAccount: TokenPDA,
+      admin: admin.publicKey,
+    };
     await program.methods
       .create(symbol, decay)
-      .accounts({
-        communityAccount: TokenPDA,
-        admin: admin.publicKey,
-      })
+      .accounts(createAccounts)
       .signers([admin])
       .rpc();
     try {
@@ -118,12 +120,13 @@ describe('phanuel', () => {
 
       const newsymbol = 'TEST2';
       const newdecay = new anchor.BN(10 * SECONDS_PER_DAY);
+      const updateAccounts = {
+        communityAccount: TokenPDA,
+        admin: admin.publicKey,
+      };
       await program.methods
         .update(newsymbol, newdecay)
-        .accounts({
-          communityAccount: TokenPDA,
-          admin: admin.publicKey,
-        })
+        .accounts(updateAccounts)
         .signers([admin])
         .rpc();
       TokenInfo = await program.account.communityAccount.fetch(TokenPDA);
@@ -143,15 +146,16 @@ describe('phanuel', () => {
     }
   });
   it('Add member!', async () => {
+    const addMembersAccounts = {
+      communityAccount: TokenPDA,
+      memberInfo: w1PDA,
+      admin: admin.publicKey,
+      member: w1.publicKey,
+      phanuelProgram: program.programId,
+    };
     const txn = await program.methods
       .addMember()
-      .accounts({
-        communityAccount: TokenPDA,
-        memberInfo: w1PDA,
-        admin: admin.publicKey,
-        member: w1.publicKey,
-        phanuelProgram: program.programId,
-      })
+      .accounts(addMembersAccounts)
       .signers([admin])
       .rpc();
     try {
@@ -165,15 +169,16 @@ describe('phanuel', () => {
     }
   });
   it('Disable & Remove member', async () => {
+    const addMembersAccounts = {
+      communityAccount: TokenPDA,
+      memberInfo: w2PDA,
+      admin: admin.publicKey,
+      member: w2.publicKey,
+      phanuelProgram: program.programId,
+    };
     await program.methods
       .addMember()
-      .accounts({
-        communityAccount: TokenPDA,
-        memberInfo: w2PDA,
-        admin: admin.publicKey,
-        member: w2.publicKey,
-        phanuelProgram: program.programId,
-      })
+      .accounts(addMembersAccounts)
       .signers([admin])
       .rpc();
     try {
@@ -185,14 +190,15 @@ describe('phanuel', () => {
       // console.error('No member, error', e);
       assert.ok(false, 'Cannot add w2');
     }
+    const disableMembersAccounts = {
+      communityAccount: TokenPDA,
+      memberInfo: w2PDA,
+      admin: admin.publicKey,
+      member: w2.publicKey,
+    };
     await program.methods
       .disableMember()
-      .accounts({
-        communityAccount: TokenPDA,
-        memberInfo: w2PDA,
-        admin: admin.publicKey,
-        member: w2.publicKey,
-      })
+      .accounts(disableMembersAccounts)
       .signers([admin])
       .rpc();
     try {
@@ -202,14 +208,15 @@ describe('phanuel', () => {
       // console.error('No member, error', e);
       assert.ok(false, 'w2 disappeared!');
     }
+    const removeMembersAccounts = {
+      communityAccount: TokenPDA,
+      memberInfo: w2PDA,
+      admin: admin.publicKey,
+      member: w2.publicKey,
+    };
     await program.methods
       .removeMember()
-      .accounts({
-        communityAccount: TokenPDA,
-        memberInfo: w2PDA,
-        admin: admin.publicKey,
-        member: w2.publicKey,
-      })
+      .accounts(removeMembersAccounts)
       .signers([admin])
       .rpc();
     try {
@@ -242,17 +249,18 @@ describe('phanuel', () => {
       ],
       program.programId
     );
+    const mintToAccounts = {
+      communityAccount: TokenPDA,
+      admin: admin.publicKey,
+      bag: bagPDA,
+      memberInfo: w1PDA,
+      member: w1.publicKey,
+      clock: anchor.web3.SYSVAR_CLOCK_PUBKEY,
+      phanuelProgram: program.programId,
+    };
     await program.methods
       .mintTo(mintAmount)
-      .accounts({
-        communityAccount: TokenPDA,
-        admin: admin.publicKey,
-        bag: bagPDA,
-        memberInfo: w1PDA,
-        member: w1.publicKey,
-        clock: anchor.web3.SYSVAR_CLOCK_PUBKEY,
-        phanuelProgram: program.programId,
-      })
+      .accounts(mintToAccounts)
       .signers([admin])
       .rpc();
     const clockInfo = await program.provider.connection.getAccountInfo(
@@ -278,9 +286,102 @@ describe('phanuel', () => {
       assert.ok(false, 'Cannot mint');
     }
   });
+  it('Mint multiple members', async () => {
+    // generate randome keypair
+    const w3 = Keypair.generate();
+    const w4 = Keypair.generate();
+    const w5 = Keypair.generate();
+    // let's add w3, w4, w5 as members
+    const addMember = async (pubK) => {
+      const [memberInfoPDA] = anchor.web3.PublicKey.findProgramAddressSync(
+        [Buffer.from('User'), TokenPDA.toBuffer(), pubK.toBuffer()],
+        program.programId
+      );
+      const addMembersAccounts = {
+        communityAccount: TokenPDA,
+        memberInfo: memberInfoPDA,
+        admin: admin.publicKey,
+        member: pubK,
+        phanuelProgram: program.programId,
+      };
+      await program.methods
+        .addMember()
+        .accounts(addMembersAccounts)
+        .signers([admin])
+        .rpc();
+      const memberInfo = await program.account.memberInfo.fetch(memberInfoPDA);
+      assert.equal(
+        memberInfo.member.toBase58(),
+        pubK.toBase58(),
+        'Member mismatched ' + pubK.toBase58()
+      );
+    };
+    await addMember(w3.publicKey);
+    await addMember(w4.publicKey);
+    await addMember(w5.publicKey);
+    const mintAmount = new anchor.BN(500);
+    const toMint = [w1.publicKey, w3.publicKey, w4.publicKey, w5.publicKey];
+    const memberInfoAccounts = [];
+    const BagAccounts = [];
+    for (var i = 0; i < toMint.length; i++) {
+      const member = toMint[i];
+      const [memberInfoPDA] = anchor.web3.PublicKey.findProgramAddressSync(
+        [Buffer.from('User'), TokenPDA.toBuffer(), member.toBuffer()],
+        program.programId
+      );
+      memberInfoAccounts.push({
+        pubkey: memberInfoPDA,
+        isSigner: false,
+        isWritable: true,
+      });
+      const memberInfo = await program.account.memberInfo.fetch(memberInfoPDA);
+      const [bagPDA] = anchor.web3.PublicKey.findProgramAddressSync(
+        [
+          Buffer.from('Bag'),
+          memberInfoPDA.toBuffer(),
+          new anchor.BN(memberInfo.max).toArrayLike(Buffer, 'le', 8),
+        ],
+        program.programId
+      );
+      BagAccounts.push({ pubkey: bagPDA, isSigner: false, isWritable: true });
+      // console.log(
+      //   'member: ',
+      //   member.toBase58(),
+      //   '; max: ',
+      //   memberInfo.max.toNumber(),
+      //   ' ; bagPDA: ',
+      //   bagPDA.toBase58()
+      // );
+    }
+    const multipleMintAccounts = {
+      communityAccount: TokenPDA,
+      admin: admin.publicKey,
+      clock: anchor.web3.SYSVAR_CLOCK_PUBKEY,
+      phanuelProgram: program.programId,
+      systemProgram: anchor.web3.SystemProgram.programId,
+    };
+    const remainingAccounts = [...memberInfoAccounts, ...BagAccounts];
+    await program.methods
+      .multipleMint(memberInfoAccounts.length, mintAmount)
+      .accounts(multipleMintAccounts)
+      .remainingAccounts(remainingAccounts)
+      .signers([admin])
+      .rpc();
+    for (var i = 0; i < toMint.length; i++) {
+      const memberInfo = await program.account.memberInfo.fetch(
+        memberInfoAccounts[i].pubkey
+      );
+      const bagInfo = await program.account.bag.fetch(BagAccounts[i].pubkey);
+      assert.equal(
+        bagInfo.amount.toNumber(),
+        mintAmount.toNumber(),
+        'Minted amount mismatched'
+      );
+    }
+  });
   it('Transfer token', async () => {
     const w1Info = await program.account.memberInfo.fetch(w1PDA);
-    assert.equal(w1Info.max.toNumber(), 1, 'Should have a bag here, max = 1');
+    assert.ok(w1Info.max.toNumber() > 1, 'Should have few bags here, max > 1');
     // take the previous minted bag
     let [w1bagPDA] = anchor.web3.PublicKey.findProgramAddressSync(
       [
@@ -291,15 +392,16 @@ describe('phanuel', () => {
       program.programId
     );
     // add w2
+    const addMembersAccounts = {
+      communityAccount: TokenPDA,
+      memberInfo: w2PDA,
+      admin: admin.publicKey,
+      member: w2.publicKey,
+      phanuelProgram: program.programId,
+    };
     await program.methods
       .addMember()
-      .accounts({
-        communityAccount: TokenPDA,
-        memberInfo: w2PDA,
-        admin: admin.publicKey,
-        member: w2.publicKey,
-        phanuelProgram: program.programId,
-      })
+      .accounts(addMembersAccounts)
       .signers([admin])
       .rpc();
     // w1 send 100 token to w2
@@ -315,18 +417,19 @@ describe('phanuel', () => {
       program.programId
     );
     // substract 100 from w1bagPDA, create new w2bagPDA with 100 and a new decayAt
+    const transferAccounts = {
+      sender: w1.publicKey,
+      member: w2.publicKey,
+      receiverInfo: w2PDA,
+      bag: w2bagPDA,
+      communityAccount: TokenPDA,
+      phanuelProgram: program.programId,
+      clock: anchor.web3.SYSVAR_CLOCK_PUBKEY,
+      senderInfo: w1PDA,
+    };
     await program.methods
       .transfer([new anchor.BN(toSendAmount)])
-      .accounts({
-        sender: w1.publicKey,
-        member: w2.publicKey,
-        receiverInfo: w2PDA,
-        bag: w2bagPDA,
-        communityAccount: TokenPDA,
-        phanuelProgram: program.programId,
-        clock: anchor.web3.SYSVAR_CLOCK_PUBKEY,
-        senderInfo: w1PDA,
-      })
+      .accounts(transferAccounts)
       .remainingAccounts([
         {
           pubkey: w1bagPDA,
@@ -341,10 +444,10 @@ describe('phanuel', () => {
       const w2bagInfo = await program.account.bag.fetch(w2bagPDA);
       // assert.equal(w1bagInfo.amount.toNumber(), 900);
       assert.equal(w2bagInfo.amount.toNumber(), toSendAmount.toNumber());
-      console.log('w1bagInfo.decayAt: ', w1bagInfo.decayAt.toNumber());
-      console.log('w1bagInfo.amount: ', w1bagInfo.amount.toNumber());
-      console.log('w2bagInfo.decayAt: ', w2bagInfo.decayAt.toNumber());
-      console.log('w2bagInfo.amount: ', w2bagInfo.amount.toNumber());
+      // console.log('w1bagInfo.decayAt: ', w1bagInfo.decayAt.toNumber());
+      // console.log('w1bagInfo.amount: ', w1bagInfo.amount.toNumber());
+      // console.log('w2bagInfo.decayAt: ', w2bagInfo.decayAt.toNumber());
+      // console.log('w2bagInfo.amount: ', w2bagInfo.amount.toNumber());
     } catch (e) {
       assert.ok(false, 'Cannot transfer');
     }

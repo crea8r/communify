@@ -19,6 +19,10 @@ pub struct CommunityAccount {
 	pub symbol: String,
 }
 
+impl CommunityAccount {
+	pub const SEED: &'static [u8] = b"MINT";
+}
+
 #[account]
 #[derive(InitSpace)]
 // status: 0 - active, 1 - disabled (no transfer)
@@ -29,6 +33,10 @@ pub struct MemberInfo {
 	pub status: u8,
 }
 
+impl MemberInfo {
+	pub const SEED: &'static [u8] = b"User";
+}
+
 #[account]
 #[derive(InitSpace)]
 pub struct Bag {
@@ -36,6 +44,11 @@ pub struct Bag {
 	pub member: Pubkey,
 	pub amount: u64,
 	pub decay_at: u64,
+	pub created_at: u64,
+}
+
+impl Bag {
+	pub const SEED: &'static [u8] = b"Bag";
 }
 
 #[account]
@@ -46,4 +59,8 @@ pub struct Memo {
 	pub to: Pubkey,
 	#[max_len(50)]
 	pub note: String,
+}
+
+impl Memo {
+	pub const SEED: &'static [u8] = b"Memo";
 }

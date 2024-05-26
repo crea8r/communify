@@ -386,6 +386,55 @@
       ]
     },
     {
+      "name": "multiple_mint",
+      "discriminator": [
+        93,
+        10,
+        205,
+        174,
+        91,
+        119,
+        204,
+        41
+      ],
+      "accounts": [
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "community_account",
+          "writable": true
+        },
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "community_account"
+          ]
+        },
+        {
+          "name": "clock",
+          "address": "SysvarC1ock11111111111111111111111111111111"
+        },
+        {
+          "name": "phanuel_program",
+          "address": "Pha5A3BB4xKRZDs8ycvukFUagaKvk3AQBaH3J5qwAok"
+        }
+      ],
+      "args": [
+        {
+          "name": "no_of_mint",
+          "type": "u8"
+        },
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
       "name": "remove_member",
       "discriminator": [
         171,
@@ -635,6 +684,16 @@
       "code": 6006,
       "name": "Unauthorized",
       "msg": "Unauthorized"
+    },
+    {
+      "code": 6007,
+      "name": "InvalidNumberOfMint",
+      "msg": "Invalid number of mint"
+    },
+    {
+      "code": 6008,
+      "name": "InvalidBagPDA",
+      "msg": "Invalid Bag PDA"
     }
   ],
   "types": [
@@ -677,6 +736,10 @@
           },
           {
             "name": "decay_at",
+            "type": "u64"
+          },
+          {
+            "name": "created_at",
             "type": "u64"
           }
         ]

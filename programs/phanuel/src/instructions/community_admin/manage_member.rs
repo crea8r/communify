@@ -9,7 +9,7 @@ pub struct AddMemberCtx<'info> {
 	#[account(mut, has_one = admin)]
 	pub community_account: Account<'info, CommunityAccount>,
 	#[account(init, payer = admin, 
-		seeds=[b"User", community_account.key().as_ref(), member.key().as_ref()], bump,
+		seeds=[MemberInfo::SEED, community_account.key().as_ref(), member.key().as_ref()], bump,
 		space = 8 + MemberInfo::INIT_SPACE,
 		owner = phanuel_program.key.clone())]
 	pub member_info: Account<'info, MemberInfo>,

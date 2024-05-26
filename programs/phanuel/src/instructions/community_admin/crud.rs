@@ -7,7 +7,7 @@ use crate::constant::*;
 #[derive(Accounts)]
 pub struct CreateCtx<'info> {
 	#[account(init, payer = admin, 
-		seeds=[b"MINT", admin.key().as_ref()], bump,
+		seeds=[CommunityAccount::SEED, admin.key().as_ref()], bump,
 		space = 8 + CommunityAccount::INIT_SPACE)]
 	pub community_account: Account<'info, CommunityAccount>,
 	#[account(mut)]

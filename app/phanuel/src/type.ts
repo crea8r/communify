@@ -392,6 +392,55 @@ export type Phanuel = {
       ]
     },
     {
+      "name": "multipleMint",
+      "discriminator": [
+        93,
+        10,
+        205,
+        174,
+        91,
+        119,
+        204,
+        41
+      ],
+      "accounts": [
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "communityAccount",
+          "writable": true
+        },
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "communityAccount"
+          ]
+        },
+        {
+          "name": "clock",
+          "address": "SysvarC1ock11111111111111111111111111111111"
+        },
+        {
+          "name": "phanuelProgram",
+          "address": "Pha5A3BB4xKRZDs8ycvukFUagaKvk3AQBaH3J5qwAok"
+        }
+      ],
+      "args": [
+        {
+          "name": "noOfMint",
+          "type": "u8"
+        },
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
       "name": "removeMember",
       "discriminator": [
         171,
@@ -641,6 +690,16 @@ export type Phanuel = {
       "code": 6006,
       "name": "unauthorized",
       "msg": "unauthorized"
+    },
+    {
+      "code": 6007,
+      "name": "invalidNumberOfMint",
+      "msg": "Invalid number of mint"
+    },
+    {
+      "code": 6008,
+      "name": "invalidBagPda",
+      "msg": "Invalid Bag PDA"
     }
   ],
   "types": [
@@ -683,6 +742,10 @@ export type Phanuel = {
           },
           {
             "name": "decayAt",
+            "type": "u64"
+          },
+          {
+            "name": "createdAt",
             "type": "u64"
           }
         ]

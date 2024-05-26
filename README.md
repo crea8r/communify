@@ -24,9 +24,13 @@ To deploy on devnet: `anchor deploy -p phanuel --provider.cluster devnet`
 
 ### Todo
 
-- [ ] Fix netlify deployment
+- [x] Fix netlify deployment
+- [ ] Mint token for multiple users using Versioned Transaction
+  - [x] New instruction for multiple mint
+  - [ ] Tutorial on Versioned Transaction
+  - [ ] UI implementation
+- [ ] One bag per 24 hour (tranfer)
 - [ ] Transfer with Memo
-- [ ] One bag per 24 hour
 - [ ] Fee to AdminAccount
 - [ ] MemberInfo is only destroyable if all bags are removed
 

@@ -16,4 +16,8 @@ pub enum ErrorCode {
 	pub ExceedMaxTokenLifeTime,
 	#[msg("Unauthorized")]
 	pub Unauthorized,
+	#[msg("Invalid number of mint")]
+	pub InvalidNumberOfMint,
+	#[msg("Invalid Bag PDA")]
+	pub InvalidBagPDA,
 }

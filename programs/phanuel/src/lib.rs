@@ -45,6 +45,10 @@ pub mod phanuel {
 	pub fn mint_to(ctx: Context<MintToCtx>, amount: u64) -> Result<()> {
 		run_mint_to(ctx, amount)
 	}
+	pub fn multiple_mint<'c: 'info, 'info>(ctx: Context<'_, '_, 'c, 'info, MultipleMintCtx<'info>>, no_of_mint:u8, amount: u64) -> Result<()>{
+		run_multiple_mint(ctx, no_of_mint, amount)
+	}
+
 	// transfer
 	pub fn transfer<'c: 'info, 'info>(ctx: Context<'_, '_, 'c, 'info, TransferCtx<'info>>, amount_each_bags: Vec<u64>) -> Result<()> {
 		run_transfer(ctx, amount_each_bags)

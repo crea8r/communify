@@ -66,7 +66,7 @@ pub struct TransferCtx<'info> {
 	#[account(mut)]
 	pub sender_info: Account<'info, MemberInfo>,
 	#[account(init, payer = sender, 
-		seeds=[b"Bag", receiver_info.key().as_ref(), &receiver_info.max.to_le_bytes()], bump, 
+		seeds=[Bag::SEED, receiver_info.key().as_ref(), &receiver_info.max.to_le_bytes()], bump, 
 		space=8 + Bag::INIT_SPACE, owner = phanuel_program.key.clone())]
 	pub bag: Account<'info, Bag>,
 	pub community_account: Account<'info, CommunityAccount>,
