@@ -22,6 +22,14 @@ To increase program size: `solana program extend Pha5A3BB4xKRZDs8ycvukFUagaKvk3A
 
 To deploy on devnet: `anchor deploy -p phanuel --provider.cluster devnet`
 
+### Todo
+
+- [ ] Fix netlify deployment
+- [ ] Transfer with Memo
+- [ ] One bag per 24 hour
+- [ ] Fee to AdminAccount
+- [ ] MemberInfo is only destroyable if all bags are removed
+
 ### Authors
 
 k2 & Jay, SuperteamUK
