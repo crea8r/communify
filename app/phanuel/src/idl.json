@@ -158,43 +158,6 @@
       ]
     },
     {
-      "name": "close_bag",
-      "discriminator": [
-        9,
-        91,
-        182,
-        165,
-        56,
-        11,
-        65,
-        214
-      ],
-      "accounts": [
-        {
-          "name": "account",
-          "writable": true
-        },
-        {
-          "name": "member",
-          "writable": true,
-          "signer": true,
-          "relations": [
-            "account"
-          ]
-        },
-        {
-          "name": "clock",
-          "address": "SysvarC1ock11111111111111111111111111111111"
-        }
-      ],
-      "args": [
-        {
-          "name": "forced",
-          "type": "bool"
-        }
-      ]
-    },
-    {
       "name": "create",
       "discriminator": [
         24,
@@ -540,6 +503,47 @@
           }
         }
       ]
+    },
+    {
+      "name": "update",
+      "discriminator": [
+        219,
+        200,
+        88,
+        176,
+        158,
+        63,
+        253,
+        127
+      ],
+      "accounts": [
+        {
+          "name": "community_account",
+          "writable": true
+        },
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "community_account"
+          ]
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "symbol",
+          "type": "string"
+        },
+        {
+          "name": "decay_after",
+          "type": "u64"
+        }
+      ]
     }
   ],
   "accounts": [
@@ -621,6 +625,16 @@
       "code": 6004,
       "name": "InvalidMemberStatus",
       "msg": "Sender or Receiver disabled"
+    },
+    {
+      "code": 6005,
+      "name": "ExceedMaxTokenLifeTime",
+      "msg": "Exceed max token lifetime"
+    },
+    {
+      "code": 6006,
+      "name": "Unauthorized",
+      "msg": "Unauthorized"
     }
   ],
   "types": [

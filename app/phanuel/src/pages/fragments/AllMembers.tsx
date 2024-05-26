@@ -16,6 +16,15 @@ const AllMembers = () => {
   const [filteredMembers, setFilteredMembers] = useState(members);
   const size = 3;
   const [offset, setOffset] = useState(0);
+  console.log(
+    filteredMembers.map((m: any) => {
+      return {
+        member: m.member.toBase58(),
+        max: m.max.toNumber(),
+        memberInfo: m.publicKey.toBase58(),
+      };
+    })
+  );
   return (
     <Card>
       <CardHeader>

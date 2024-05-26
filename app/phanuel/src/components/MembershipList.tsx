@@ -15,6 +15,7 @@ const MembershipList = () => {
   const wallet = useAnchorWallet() as anchor.Wallet;
   const [memberships, setMemberships] = useState<any[]>([]);
   useEffect(() => {
+    console.log('** MembershipList useEffect **');
     const fetchMemberships = async () => {
       const raw = await anchor
         .getProvider()

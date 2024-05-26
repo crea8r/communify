@@ -23,6 +23,7 @@ const Admin = () => {
   const [loading, setLoading] = useState(false);
   const [members, setMembers] = useState<any[]>([]);
   useEffect(() => {
+    console.log('** Admin useEffect **');
     if (wallet) {
       const [communityAccountPubKey] =
         anchor.web3.PublicKey.findProgramAddressSync(

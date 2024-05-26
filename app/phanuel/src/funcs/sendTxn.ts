@@ -13,11 +13,17 @@ const sendTxn = async (connection: any, transaction: any, feePayer: any) => {
     preflightCommitment: 'finalized',
     maxRetries: 10,
   };
+  // const sendOptions = {
+  //   skipPreflight: true,
+  //   preflightCommitment: 'confirmed',
+  //   maxRetries: 0,
+  // };
   const signature = await connection.sendRawTransaction(
     signedTransaction.serialize(),
     sendOptions
   );
   const latestBlockHash = await connection.getLatestBlockhash();
+  console.log('latestBlockHash: ', latestBlockHash);
   const confirmStrategy: BlockheightBasedTransactionConfirmationStrategy = {
     blockhash: latestBlockHash.blockhash,
     lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,

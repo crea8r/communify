@@ -164,43 +164,6 @@ export type Phanuel = {
       ]
     },
     {
-      "name": "closeBag",
-      "discriminator": [
-        9,
-        91,
-        182,
-        165,
-        56,
-        11,
-        65,
-        214
-      ],
-      "accounts": [
-        {
-          "name": "account",
-          "writable": true
-        },
-        {
-          "name": "member",
-          "writable": true,
-          "signer": true,
-          "relations": [
-            "account"
-          ]
-        },
-        {
-          "name": "clock",
-          "address": "SysvarC1ock11111111111111111111111111111111"
-        }
-      ],
-      "args": [
-        {
-          "name": "forced",
-          "type": "bool"
-        }
-      ]
-    },
-    {
       "name": "create",
       "discriminator": [
         24,
@@ -546,6 +509,47 @@ export type Phanuel = {
           }
         }
       ]
+    },
+    {
+      "name": "update",
+      "discriminator": [
+        219,
+        200,
+        88,
+        176,
+        158,
+        63,
+        253,
+        127
+      ],
+      "accounts": [
+        {
+          "name": "communityAccount",
+          "writable": true
+        },
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "communityAccount"
+          ]
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "symbol",
+          "type": "string"
+        },
+        {
+          "name": "decayAfter",
+          "type": "u64"
+        }
+      ]
     }
   ],
   "accounts": [
@@ -627,6 +631,16 @@ export type Phanuel = {
       "code": 6004,
       "name": "invalidMemberStatus",
       "msg": "Sender or Receiver disabled"
+    },
+    {
+      "code": 6005,
+      "name": "exceedMaxTokenLifeTime",
+      "msg": "Exceed max token lifetime"
+    },
+    {
+      "code": 6006,
+      "name": "unauthorized",
+      "msg": "unauthorized"
     }
   ],
   "types": [

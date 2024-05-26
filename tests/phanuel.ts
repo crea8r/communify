@@ -42,6 +42,7 @@ describe('phanuel', () => {
     [Buffer.from('User'), TokenPDA.toBuffer(), w2.publicKey.toBuffer()],
     program.programId
   );
+  const SECONDS_PER_DAY = 86400;
 
   before(async () => {
     let txn = new anchor.web3.Transaction();
@@ -66,7 +67,7 @@ describe('phanuel', () => {
     );
     // console.log('* Setup complete');
   });
-  let decay = new anchor.BN(89890);
+  let decay = new anchor.BN(7 * SECONDS_PER_DAY);
 
   it('Init admin account & change fee', async () => {
     const [adminPDAAddress] = anchor.web3.PublicKey.findProgramAddressSync(
@@ -103,7 +104,7 @@ describe('phanuel', () => {
 
   it('Create token!', async () => {
     let symbol = 'TEST';
-    const txn = await program.methods
+    await program.methods
       .create(symbol, decay)
       .accounts({
         communityAccount: TokenPDA,
@@ -112,8 +113,30 @@ describe('phanuel', () => {
       .signers([admin])
       .rpc();
     try {
-      const TokenInfo = await program.account.communityAccount.fetch(TokenPDA);
+      let TokenInfo = await program.account.communityAccount.fetch(TokenPDA);
       assert.equal(TokenInfo.decayAfter.toNumber(), decay.toNumber());
+
+      const newsymbol = 'TEST2';
+      const newdecay = new anchor.BN(10 * SECONDS_PER_DAY);
+      await program.methods
+        .update(newsymbol, newdecay)
+        .accounts({
+          communityAccount: TokenPDA,
+          admin: admin.publicKey,
+        })
+        .signers([admin])
+        .rpc();
+      TokenInfo = await program.account.communityAccount.fetch(TokenPDA);
+      assert.equal(
+        TokenInfo.decayAfter.toNumber(),
+        newdecay.toNumber(),
+        'After update, decay time mismatched'
+      );
+      assert.equal(
+        TokenInfo.symbol,
+        newsymbol,
+        'After update, symbol mismatched'
+      );
     } catch (e) {
       console.log('Token Not Existed; error', e);
       assert.ok(false);
@@ -239,12 +262,17 @@ describe('phanuel', () => {
     // console.log('Clock.unix_timestamp: ', clockData.unix_timestamp.toNumber());
     try {
       const bagInfo = await program.account.bag.fetch(bagPDA);
-      assert.equal(bagInfo.amount.toNumber(), mintAmount.toNumber());
+      assert.equal(
+        bagInfo.amount.toNumber(),
+        mintAmount.toNumber(),
+        'Minted amount mismatched'
+      );
       // console.log('decayAt: ', bagInfo.decayAt.toNumber());
       // check the decayAt is correct
       assert.equal(
         bagInfo.decayAt.toNumber() - clockData.unix_timestamp.toNumber(),
-        tokenInfo.decayAfter.toNumber()
+        tokenInfo.decayAfter.toNumber(),
+        'Decay time mismatched'
       );
     } catch (e) {
       assert.ok(false, 'Cannot mint');
