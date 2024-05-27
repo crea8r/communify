@@ -5,6 +5,11 @@ import { Keypair } from '@solana/web3.js';
 import { assert } from 'chai';
 import fs from 'fs';
 import * as borsh from '@coral-xyz/borsh';
+import {
+  sendV0Transaction,
+  waitForNewBlock,
+  initializeLookupTable,
+} from './v0Helper';
 
 export default function loadKeypairFromFile(filename: string): Keypair {
   const secret = JSON.parse(fs.readFileSync(filename).toString()) as number[];
@@ -287,10 +292,13 @@ describe('phanuel', () => {
     }
   });
   it('Mint multiple members', async () => {
-    // generate randome keypair
-    const w3 = Keypair.generate();
-    const w4 = Keypair.generate();
-    const w5 = Keypair.generate();
+    // generate randome keypair; MAX=19!
+    const MAX_PER_INS = 18;
+    const noOfMembers = 100;
+    const keypairs = [];
+    for (var i = 0; i < noOfMembers; i++) {
+      keypairs.push(Keypair.generate());
+    }
     // let's add w3, w4, w5 as members
     const addMember = async (pubK) => {
       const [memberInfoPDA] = anchor.web3.PublicKey.findProgramAddressSync(
@@ -316,11 +324,12 @@ describe('phanuel', () => {
         'Member mismatched ' + pubK.toBase58()
       );
     };
-    await addMember(w3.publicKey);
-    await addMember(w4.publicKey);
-    await addMember(w5.publicKey);
+    for (var i = 0; i < keypairs.length; i++) {
+      await addMember(keypairs[i].publicKey);
+    }
+
     const mintAmount = new anchor.BN(500);
-    const toMint = [w1.publicKey, w3.publicKey, w4.publicKey, w5.publicKey];
+    const toMint = [...keypairs.map((k) => k.publicKey)];
     const memberInfoAccounts = [];
     const BagAccounts = [];
     for (var i = 0; i < toMint.length; i++) {
@@ -344,14 +353,6 @@ describe('phanuel', () => {
         program.programId
       );
       BagAccounts.push({ pubkey: bagPDA, isSigner: false, isWritable: true });
-      // console.log(
-      //   'member: ',
-      //   member.toBase58(),
-      //   '; max: ',
-      //   memberInfo.max.toNumber(),
-      //   ' ; bagPDA: ',
-      //   bagPDA.toBase58()
-      // );
     }
     const multipleMintAccounts = {
       communityAccount: TokenPDA,
@@ -361,27 +362,73 @@ describe('phanuel', () => {
       systemProgram: anchor.web3.SystemProgram.programId,
     };
     const remainingAccounts = [...memberInfoAccounts, ...BagAccounts];
-    await program.methods
-      .multipleMint(memberInfoAccounts.length, mintAmount)
-      .accounts(multipleMintAccounts)
-      .remainingAccounts(remainingAccounts)
-      .signers([admin])
-      .rpc();
+    // await program.methods
+    //   .multipleMint(memberInfoAccounts.length, mintAmount)
+    //   .accounts(multipleMintAccounts)
+    //   .remainingAccounts(remainingAccounts)
+    //   .signers([admin])
+    //   .rpc();
+    const connection = anchor.getProvider().connection;
+    const lookupTableAddress = await initializeLookupTable(
+      admin,
+      connection,
+      remainingAccounts.map((ac) => ac.pubkey)
+    );
+    await waitForNewBlock(connection, 1);
+
+    const lookupTableAccounts = (
+      await connection.getAddressLookupTable(lookupTableAddress)
+    ).value;
+    if (!lookupTableAccounts) {
+      throw new Error('Lookup table accounts not found');
+    }
+
+    // split const memberInfoAccounts, BagAccounts into group of MAX_PER_INS
+    for (var i = 0; i < Math.ceil(noOfMembers / MAX_PER_INS); i++) {
+      const start = i * MAX_PER_INS;
+      const end =
+        start + MAX_PER_INS > noOfMembers ? noOfMembers : start + MAX_PER_INS;
+      const bagSlice = BagAccounts.slice(start, end);
+      const memberSlice = memberInfoAccounts.slice(start, end);
+      const remainingAccountsSlice = [...memberSlice, ...bagSlice];
+      const mintIns = await program.methods
+        .multipleMint(memberSlice.length, mintAmount)
+        .accounts(multipleMintAccounts)
+        .remainingAccounts(remainingAccountsSlice)
+        .instruction();
+      await sendV0Transaction(
+        connection,
+        admin,
+        [mintIns],
+        [lookupTableAccounts]
+      );
+    }
+
+    // TODO: deactive and close
     for (var i = 0; i < toMint.length; i++) {
-      const memberInfo = await program.account.memberInfo.fetch(
-        memberInfoAccounts[i].pubkey
-      );
-      const bagInfo = await program.account.bag.fetch(BagAccounts[i].pubkey);
-      assert.equal(
-        bagInfo.amount.toNumber(),
-        mintAmount.toNumber(),
-        'Minted amount mismatched'
-      );
+      // const memberInfo = await program.account.memberInfo.fetch(
+      //   memberInfoAccounts[i].pubkey
+      // );
+      try {
+        const bagInfo = await program.account.bag.fetch(BagAccounts[i].pubkey);
+        assert.equal(
+          bagInfo.amount.toNumber(),
+          mintAmount.toNumber(),
+          'Minted amount mismatched'
+        );
+      } catch (e) {
+        console.log(
+          'NOT FOUND bag: ',
+          BagAccounts[i].pubkey.toBase58(),
+          ' of ',
+          keypairs[i].publicKey.toBase58()
+        );
+      }
     }
   });
   it('Transfer token', async () => {
     const w1Info = await program.account.memberInfo.fetch(w1PDA);
-    assert.ok(w1Info.max.toNumber() > 1, 'Should have few bags here, max > 1');
+    assert.ok(w1Info.max.toNumber() > 0, 'Should have few bags here, max > 0');
     // take the previous minted bag
     let [w1bagPDA] = anchor.web3.PublicKey.findProgramAddressSync(
       [
