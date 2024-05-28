@@ -1,11 +1,10 @@
 import * as anchor from '@coral-xyz/anchor';
 import { web3 } from '@coral-xyz/anchor';
-
-export const MAX_ADDRESSES_PER_EXTEND_TXN = 30;
+import sendTxn from './sendTxn';
 
 export async function sendV0Transaction(
   connection: web3.Connection,
-  user: web3.Keypair,
+  user: anchor.Wallet,
   instructions: web3.TransactionInstruction[],
   lookupTableAccounts?: web3.AddressLookupTableAccount[]
 ) {
@@ -23,21 +22,29 @@ export async function sendV0Transaction(
   const transaction = new web3.VersionedTransaction(messageV0);
 
   // Sign the transaction with the user's keypair
-  transaction.sign([user]);
-
-  // Send the transaction to the cluster
-  const txid = await connection.sendTransaction(transaction);
+  const signedTxn = await user.signTransaction(transaction);
 
   // Confirm the transaction
-  await connection.confirmTransaction(
-    {
-      blockhash,
-      lastValidBlockHeight,
-      signature: txid,
-    },
-    'finalized'
-  );
-  console.log('https://explorer.solana.com/tx/' + txid + '?cluster=devnet');
+  try {
+    // Send the transaction to the cluster
+    const txid = await connection.sendTransaction(signedTxn, {
+      skipPreflight: true,
+    });
+    await connection.confirmTransaction(
+      {
+        blockhash,
+        lastValidBlockHeight,
+        signature: txid,
+      },
+      'finalized'
+    );
+    return txid;
+  } catch (e) {
+    console.error('Error sending transaction: ', e);
+    return false;
+  }
+
+  // console.log('https://explorer.solana.com/tx/' + txid + '?cluster=devnet');
 }
 
 export function waitForNewBlock(
@@ -63,10 +70,15 @@ export function waitForNewBlock(
   });
 }
 
+export const MAX_ADDRESSES_PER_EXTEND_TXN = parseInt(
+  import.meta.env.VITE_MAX_ADDRESSES_PER_EXTEND_TXN
+);
+
 export async function initializeLookupTable(
-  user: web3.Keypair,
+  user: anchor.Wallet,
   connection: web3.Connection,
-  addresses: web3.PublicKey[]
+  addresses: web3.PublicKey[],
+  inform: (data: any) => void
 ): Promise<web3.PublicKey> {
   // Get the current slot
   const slot = await connection.getSlot();
@@ -77,19 +89,27 @@ export async function initializeLookupTable(
     web3.AddressLookupTableProgram.createLookupTable({
       authority: user.publicKey,
       payer: user.publicKey,
-      recentSlot: slot - 1,
+      recentSlot: slot,
     });
   console.log('lookup table address: ', lookupTableAddress.toBase58());
 
   let no_of_slices = Math.ceil(addresses.length / MAX_ADDRESSES_PER_EXTEND_TXN);
-  await sendV0Transaction(connection, user, [lookupTableInst]);
-  console.log('lookup table created successfully!');
+  const createLookupTableTxid = await sendV0Transaction(connection, user, [
+    lookupTableInst,
+  ]);
+  inform({
+    idx: 0,
+    txid: createLookupTableTxid,
+    msg:
+      'Lookup table created successfully at ' + lookupTableAddress.toBase58(),
+  });
+  console.log('no of addresses: ', addresses.length);
+  console.log('no of extend txn: ', no_of_slices);
   for (var i = 0; i < no_of_slices; i++) {
     const start = i * MAX_ADDRESSES_PER_EXTEND_TXN;
-    const end =
-      start + MAX_ADDRESSES_PER_EXTEND_TXN > addresses.length
-        ? addresses.length
-        : start + MAX_ADDRESSES_PER_EXTEND_TXN;
+    const tmp = start + MAX_ADDRESSES_PER_EXTEND_TXN;
+    console.log('tmp: ', tmp, ' addresses.length: ', addresses.length);
+    const end = tmp > addresses.length ? addresses.length : tmp;
     let addresses_slice = addresses.slice(
       i * MAX_ADDRESSES_PER_EXTEND_TXN,
       end
@@ -100,9 +120,37 @@ export async function initializeLookupTable(
       lookupTable: lookupTableAddress,
       addresses: addresses_slice, // The addresses to add to the lookup table
     });
+    console.log(
+      'prepare to extend addresses from ',
+      start,
+      ' to ',
+      end,
+      addresses_slice
+    );
+    // const extendLookupTableTxid = await sendV0Transaction(connection, user, [
+    //   extendInstruction,
+    // ]);
 
-    await sendV0Transaction(connection, user, [extendInstruction]);
-    console.log('lookup table extended successfully!');
+    ///
+    const transaction = new web3.Transaction().add(extendInstruction);
+    const extendLookupTableTxid = await sendTxn(connection, transaction, user);
+    ///
+
+    if (extendLookupTableTxid) {
+      inform({
+        idx: i + 1,
+        txid: extendLookupTableTxid,
+        msg: 'Lookup table extended at ' + lookupTableAddress.toBase58(),
+        status: 2,
+      });
+    } else {
+      inform({
+        idx: i + 1,
+        txid: '',
+        msg: 'Lookup table failed to extend ' + lookupTableAddress.toBase58(),
+        status: 1,
+      });
+    }
   }
 
   // Create an instruction to extend a lookup table with the provided addresses
@@ -110,7 +158,7 @@ export async function initializeLookupTable(
   return lookupTableAddress;
 }
 
-export const sliceInArrays = (arr: any[], max) => {
+export const sliceInArrays = (arr: any[], max: number) => {
   const noOfSlices = Math.ceil(arr.length / max);
   const rs = [];
   for (var i = 0; i < noOfSlices; i++) {
@@ -123,7 +171,7 @@ export const sliceInArrays = (arr: any[], max) => {
 
 const main = () => {
   const max = 5;
-  function test(len) {
+  function test(len: number) {
     const arr = [];
     for (var i = 0; i < len; i++) {
       arr.push(i);

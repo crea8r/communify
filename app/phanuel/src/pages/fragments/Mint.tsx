@@ -9,18 +9,21 @@ import {
   Label,
 } from '../../components/ui';
 import { useContext, useState } from 'react';
-import { mintTo } from '../../services/Community';
+import { mintTo, multipleMint } from '../../services/Community';
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
 import * as anchor from '@coral-xyz/anchor';
 import { MemberListContext } from '../Admin';
 import shortenAddress from '../../funcs/shortenAddress';
+import Loading from '../../components/Loading';
 
 const Mint = () => {
   const [tokenAmount, setTokenAmount] = useState(0);
   const [loading, setLoading] = useState(false);
   const admin = useAnchorWallet() as anchor.Wallet;
   const memberPDAs = useContext(MemberListContext);
-  const [mintProgresses, setMintProgresses] = useState<any[]>([]);
+  const [mintTxns, setMintTxns] = useState<any[]>([]);
+  const [errorMsg, setErrMsg] = useState();
+  const [successMsg, setSuccessMsg] = useState();
   return (
     <Card>
       <CardHeader>
@@ -46,48 +49,26 @@ const Mint = () => {
             />
           </div>
           <Button
-            onClick={async (e: any) => {
+            onClick={(e: any) => {
               e.preventDefault();
-              if (loading) {
-                return;
-              }
-
-              let i = 0;
-              const mint = () => {
-                // if (i >= memberPDAs.length) {
-                if (i >= 1) {
-                  setLoading(false);
-                  return;
-                }
-                mintTo({
-                  admin,
-                  receiver: memberPDAs[i].member,
-                  amount: tokenAmount,
-                  success,
-                  error,
-                });
-              };
-              const success = () => {
-                const msg =
-                  'SUCCESS - ' +
-                  shortenAddress(memberPDAs[i].member.toBase58());
-                console.log(msg);
-                setMintProgresses([...mintProgresses, msg]);
-                i++;
-                mint();
-              };
-              const error = (e: any) => {
-                console.error(e);
-                const msg =
-                  'FAILED - ' + shortenAddress(memberPDAs[i].member.toBase58());
-                console.log(msg);
-                setMintProgresses([...mintProgresses, msg]);
-                i++;
-                mint();
-              };
-              console.log('Minting');
-              mint();
               setLoading(true);
+              multipleMint({
+                admin,
+                receivers: memberPDAs.map((m: any) => m.member),
+                amount: tokenAmount,
+                info: (data: any[]) => {
+                  console.log('set info: ', [...data]);
+                  setMintTxns([...data]);
+                },
+                success: (msg: any) => {
+                  setSuccessMsg(msg);
+                  setLoading(false);
+                },
+                error: (msg: any) => {
+                  setErrMsg(msg);
+                  setLoading(false);
+                },
+              });
             }}
           >
             Mint and Send{' '}
@@ -95,15 +76,49 @@ const Mint = () => {
               ? parseInt(tokenAmount.toString()) + ' token(s) per member'
               : ''}
           </Button>
-          {mintProgresses.length > 0 ? (
+          {errorMsg ? <div className='text-red-500'>{errorMsg}</div> : null}
+          {successMsg ? (
+            <div className='text-green-500'>{successMsg}</div>
+          ) : null}
+          {loading ? <Loading /> : null}
+          {mintTxns.length > 0 ? (
             <div>
-              <div>Minting, do not close your browser</div>
-              <div className='h-[100px] overflow-auto'>
-                {mintProgresses.map((p, i) => (
-                  <div key={i} className='mb-2 border rounded-lg'>
-                    {p}
-                  </div>
+              <div>
+                Minting with {mintTxns.length} transactions, do not close your
+                browser till them all turn green.
+              </div>
+              <div className='flex gap-2 mt-2'>
+                {mintTxns.map((p, i) => (
+                  <div
+                    className={`rounded-full w-[10px] h-[10px] ${
+                      p.status == 0 // 0: pending, 1: processing, 2: success
+                        ? 'border-2 border-gray-500'
+                        : p.status == 1
+                        ? 'bg-red-500'
+                        : 'bg-green-500'
+                    }`}
+                    key={i}
+                    title={
+                      p.status == 0 // 0: pending, 1: processing, 2: success
+                        ? 'Pending'
+                        : p.status == 1
+                        ? 'Failed'
+                        : p.txid
+                    }
+                  ></div>
                 ))}
+              </div>
+              <div className='mt-2'>
+                {mintTxns.map((p, i) =>
+                  p.status != 0 ? (
+                    <div
+                      className='mb-2 p-2 border rounded-md'
+                      key={'msg-' + i}
+                    >
+                      {p.msg}
+                    </div>
+                  ) : null
+                )}
               </div>
             </div>
           ) : null}

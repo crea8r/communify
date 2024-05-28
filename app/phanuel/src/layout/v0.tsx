@@ -98,7 +98,10 @@ const Display = ({ children }: { children: any }) => {
 
 const V0 = (props: any) => {
   const cluster = import.meta.env.VITE_CLUSTER;
-  const endpoint = web3.clusterApiUrl(cluster);
+  //https://devnet.helius-rpc.com/?api-key=8f88217f-c97b-4309-a38a-f5935725082e
+  //const endpoint = web3.clusterApiUrl(cluster);
+  const endpoint =
+    'https://devnet.helius-rpc.com/?api-key=8f88217f-c97b-4309-a38a-f5935725082e';
   const wallets = useMemo(() => [], []);
   return (
     <div className='flex flex-col w-full'>

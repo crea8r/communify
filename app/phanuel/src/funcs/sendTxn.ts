@@ -9,9 +9,9 @@ const sendTxn = async (connection: any, transaction: any, feePayer: any) => {
   // console.log('signedTransaction: ', signedTransaction);
   // console.log('feePayer: ', feePayer);
   const sendOptions = {
-    skipPreflight: false,
-    preflightCommitment: 'finalized',
-    maxRetries: 10,
+    skipPreflight: true,
+    // preflightCommitment: 'finalized',
+    // maxRetries: 10,
   };
   // const sendOptions = {
   //   skipPreflight: true,
