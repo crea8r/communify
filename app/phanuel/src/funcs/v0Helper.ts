@@ -1,6 +1,7 @@
 import * as anchor from '@coral-xyz/anchor';
 import { web3 } from '@coral-xyz/anchor';
 import sendTxn from './sendTxn';
+import { ComputeBudgetProgram } from '@solana/web3.js';
 
 export async function sendV0Transaction(
   connection: web3.Connection,
@@ -40,7 +41,7 @@ export async function sendV0Transaction(
     );
     return txid;
   } catch (e) {
-    console.error('Error sending transaction: ', e);
+    console.error('🛑 Error sending transaction: ', e);
     return false;
   }
 
@@ -89,26 +90,31 @@ export async function initializeLookupTable(
     web3.AddressLookupTableProgram.createLookupTable({
       authority: user.publicKey,
       payer: user.publicKey,
-      recentSlot: slot,
+      recentSlot: slot - 1,
     });
-  console.log('lookup table address: ', lookupTableAddress.toBase58());
 
   let no_of_slices = Math.ceil(addresses.length / MAX_ADDRESSES_PER_EXTEND_TXN);
+  const extendInstruction = web3.AddressLookupTableProgram.extendLookupTable({
+    payer: user.publicKey,
+    authority: user.publicKey,
+    lookupTable: lookupTableAddress,
+    addresses: [user.publicKey], // The addresses to add to the lookup table
+  });
   const createLookupTableTxid = await sendV0Transaction(connection, user, [
     lookupTableInst,
+    extendInstruction,
   ]);
   inform({
     idx: 0,
     txid: createLookupTableTxid,
     msg:
-      'Lookup table created successfully at ' + lookupTableAddress.toBase58(),
+      '✅ Lookup table created successfully at ' +
+      lookupTableAddress.toBase58(),
   });
-  console.log('no of addresses: ', addresses.length);
-  console.log('no of extend txn: ', no_of_slices);
+  // await waitForNewBlock(connection, 10);
   for (var i = 0; i < no_of_slices; i++) {
     const start = i * MAX_ADDRESSES_PER_EXTEND_TXN;
     const tmp = start + MAX_ADDRESSES_PER_EXTEND_TXN;
-    console.log('tmp: ', tmp, ' addresses.length: ', addresses.length);
     const end = tmp > addresses.length ? addresses.length : tmp;
     let addresses_slice = addresses.slice(
       i * MAX_ADDRESSES_PER_EXTEND_TXN,
@@ -120,34 +126,24 @@ export async function initializeLookupTable(
       lookupTable: lookupTableAddress,
       addresses: addresses_slice, // The addresses to add to the lookup table
     });
-    console.log(
-      'prepare to extend addresses from ',
-      start,
-      ' to ',
-      end,
-      addresses_slice
-    );
-    // const extendLookupTableTxid = await sendV0Transaction(connection, user, [
-    //   extendInstruction,
-    // ]);
-
-    ///
-    const transaction = new web3.Transaction().add(extendInstruction);
-    const extendLookupTableTxid = await sendTxn(connection, transaction, user);
-    ///
-
+    const extendLookupTableTxid = await sendV0Transaction(connection, user, [
+      extendInstruction,
+      ComputeBudgetProgram.setComputeUnitLimit({
+        units: 200000,
+      }),
+    ]);
     if (extendLookupTableTxid) {
       inform({
         idx: i + 1,
         txid: extendLookupTableTxid,
-        msg: 'Lookup table extended at ' + lookupTableAddress.toBase58(),
+        msg: '✅ Lookup table extended',
         status: 2,
       });
     } else {
       inform({
         idx: i + 1,
         txid: '',
-        msg: 'Lookup table failed to extend ' + lookupTableAddress.toBase58(),
+        msg: '🛑 Lookup table failed to extend',
         status: 1,
       });
     }

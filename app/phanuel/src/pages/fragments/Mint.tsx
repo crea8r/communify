@@ -21,7 +21,13 @@ const Mint = () => {
   const [loading, setLoading] = useState(false);
   const admin = useAnchorWallet() as anchor.Wallet;
   const memberPDAs = useContext(MemberListContext);
-  const [mintTxns, setMintTxns] = useState<any[]>([]);
+  const [mintTxns, setMintTxns] = useState<any[]>([
+    {
+      txid: '47gSGSsCwzqKXnAFbt5KBkv1unzZB12ZYYf26MGpkXUyM1YHMTes913VtwE8qo2BXzvDc8TvGeaT3mKkT7B52WNA',
+      msg: '✅ Lookup table extended successfully',
+      status: 2,
+    },
+  ]);
   const [errorMsg, setErrMsg] = useState();
   const [successMsg, setSuccessMsg] = useState();
   return (
@@ -112,10 +118,21 @@ const Mint = () => {
                 {mintTxns.map((p, i) =>
                   p.status != 0 ? (
                     <div
-                      className='mb-2 p-2 border rounded-md'
+                      className='mb-2 p-2 border rounded-md flex'
                       key={'msg-' + i}
+                      title={p.txid}
                     >
-                      {p.msg}
+                      <div className='grow'>{p.msg}</div>
+                      <a
+                        href={
+                          'https://explorer.solana.com/tx/' +
+                          p.txid +
+                          '?cluster=devnet'
+                        }
+                        target='_blank'
+                      >
+                        🔗
+                      </a>
                     </div>
                   ) : null
                 )}

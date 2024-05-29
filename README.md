@@ -28,7 +28,8 @@ To deploy on devnet: `anchor deploy -p phanuel --provider.cluster devnet`
 - [ ] Mint token for multiple users using Versioned Transaction
   - [x] New instruction for multiple mint
   - [x] Tutorial on Versioned Transaction
-  - [ ] UI implementation: a dialog to show how many transaction would need (incld. new ALT every mint ~ later improvement)
+  - [x] UI implementation: a dialog to show how many transaction would need (incld. new ALT every mint ~ later improvement)
+- [ ] UI to change token configuration
 - [ ] Delete memberInfo & close bags
   - [ ] Instructions
   - [ ] UI implementation

@@ -165,11 +165,10 @@ export const multipleMint = async ({
 }: MultipleMintProps) => {
   let program = getProgram();
   const txns: any[] = [];
-  const noOfExtendsTxn = Math.ceil((2 * receivers.length) / MAX_PER_INS);
-  const noOfMintTxn = Math.ceil(
-    receivers.length / MAX_ADDRESSES_PER_EXTEND_TXN
+  const noOfExtendsTxn = Math.ceil(
+    (2 * receivers.length) / MAX_ADDRESSES_PER_EXTEND_TXN
   );
-
+  const noOfMintTxn = Math.ceil(receivers.length / MAX_PER_INS);
   for (var i = 0; i < 1 + noOfExtendsTxn + noOfMintTxn; i++) {
     txns.push({
       txid: '',
@@ -257,15 +256,15 @@ export const multipleMint = async ({
     if (rs) {
       txns[1 + noOfExtendsTxn + i].txid = rs;
       txns[1 + noOfExtendsTxn + i].status = 2;
-      txns[1 + noOfExtendsTxn + i].msg = 'Minted txn succeeded';
+      txns[1 + noOfExtendsTxn + i].msg = '✅ Minted txn succeeded';
       info(txns);
     } else {
       txns[1 + noOfExtendsTxn + i].txid = '';
       txns[1 + noOfExtendsTxn + i].status = 1;
-      txns[1 + noOfExtendsTxn + i].msg = 'Minted txn failed';
+      txns[1 + noOfExtendsTxn + i].msg = '🛑 Minted txn failed';
     }
   }
-  success('All mints are done!');
+  success('✅ All mints are done!');
 };
 
 export default {
