@@ -57,6 +57,7 @@ pub struct Memo {
 	pub community: Pubkey,
 	pub from: Pubkey,
 	pub to: Pubkey,
+	pub amount: u64,
 	#[max_len(50)]
 	pub note: String,
 }

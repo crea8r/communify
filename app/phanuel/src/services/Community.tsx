@@ -78,7 +78,7 @@ export const update = async ({
       success();
     })
     .catch((e) => {
-      alert('Error creating token: ' + e.message);
+      alert('Error updating token: ' + e.message);
       if (error) error();
     })
     .finally(() => {

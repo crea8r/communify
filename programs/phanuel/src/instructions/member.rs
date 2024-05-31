@@ -6,7 +6,7 @@ use crate::writer::*;
 use crate::constant::*;
 use crate::ID;
 
-pub fn run_transfer<'c: 'info, 'info>(ctx: Context<'_, '_, 'c, 'info, TransferCtx<'info>>, amount_each_bags: Vec<u64>) -> Result<()> {
+pub fn run_transfer<'c: 'info, 'info>(ctx: Context<'_, '_, 'c, 'info, TransferCtx<'info>>, amount_each_bags: Vec<u64>, note: String) -> Result<()> {
   if ctx.accounts.sender_info.member != *ctx.accounts.sender.key {
     return Err(ErrorCode::InvalidBagOwner.into());
   }
@@ -42,6 +42,12 @@ pub fn run_transfer<'c: 'info, 'info>(ctx: Context<'_, '_, 'c, 'info, TransferCt
   ctx.accounts.bag.member = *ctx.accounts.member.key;
   ctx.accounts.bag.community = ctx.accounts.community_account.key();
 
+  ctx.accounts.memo.amount = total;
+  ctx.accounts.memo.from = *ctx.accounts.sender.key;
+  ctx.accounts.memo.to = *ctx.accounts.member.key;
+  ctx.accounts.memo.community = ctx.accounts.community_account.key();
+  ctx.accounts.memo.note = note;
+
   ctx.accounts.receiver_info.max += 1;
   Ok(())
 }
@@ -71,6 +77,10 @@ pub struct TransferCtx<'info> {
 	pub bag: Account<'info, Bag>,
 	pub community_account: Account<'info, CommunityAccount>,
 	pub system_program: Program<'info, System>,
+  #[account(init, payer = sender, 
+		seeds=[Memo::SEED, receiver_info.key().as_ref(), &receiver_info.max.to_le_bytes()], bump, 
+		space=8 + Memo::INIT_SPACE, owner = phanuel_program.key.clone())]
+	pub memo: Account<'info, Memo>,
 	#[account(address = ID)]
 	/// CHECK: phanuel program
 	pub phanuel_program: AccountInfo<'info>,

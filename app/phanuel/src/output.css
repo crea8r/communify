@@ -618,6 +618,10 @@ video {
   margin-top: 0.5rem;
 }
 
+.ml-2 {
+  margin-left: 0.5rem;
+}
+
 .block {
   display: block;
 }
@@ -668,6 +672,10 @@ video {
 
 .h-\[20px\] {
   height: 20px;
+}
+
+.h-2 {
+  height: 0.5rem;
 }
 
 .min-h-screen {

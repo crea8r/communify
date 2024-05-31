@@ -542,6 +542,32 @@ export type Phanuel = {
           "address": "11111111111111111111111111111111"
         },
         {
+          "name": "memo",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  77,
+                  101,
+                  109,
+                  111
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "receiverInfo"
+              },
+              {
+                "kind": "account",
+                "path": "receiver_info.max",
+                "account": "memberInfo"
+              }
+            ]
+          }
+        },
+        {
           "name": "phanuelProgram",
           "address": "Pha5A3BB4xKRZDs8ycvukFUagaKvk3AQBaH3J5qwAok"
         },
@@ -556,6 +582,10 @@ export type Phanuel = {
           "type": {
             "vec": "u64"
           }
+        },
+        {
+          "name": "note",
+          "type": "string"
         }
       ]
     },
@@ -652,6 +682,19 @@ export type Phanuel = {
         27,
         161,
         167
+      ]
+    },
+    {
+      "name": "memo",
+      "discriminator": [
+        161,
+        231,
+        183,
+        96,
+        66,
+        120,
+        3,
+        80
       ]
     }
   ],
@@ -791,6 +834,34 @@ export type Phanuel = {
           {
             "name": "status",
             "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "memo",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "community",
+            "type": "pubkey"
+          },
+          {
+            "name": "from",
+            "type": "pubkey"
+          },
+          {
+            "name": "to",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "note",
+            "type": "string"
           }
         ]
       }

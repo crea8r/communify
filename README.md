@@ -29,12 +29,12 @@ To deploy on devnet: `anchor deploy -p phanuel --provider.cluster devnet`
   - [x] New instruction for multiple mint
   - [x] Tutorial on Versioned Transaction
   - [x] UI implementation: a dialog to show how many transaction would need (incld. new ALT every mint ~ later improvement)
-- [ ] UI to change token configuration
+- [x] UI to change token configuration
 - [ ] Delete memberInfo & close bags
   - [ ] Instructions
   - [ ] UI implementation
 - [ ] One bag per 24 hour (tranfer)
-- [ ] Transfer with Memo
+- [x] Transfer with Memo
 - [ ] Fee to AdminAccount
 - [ ] MemberInfo is only destroyable if all bags are removed
 

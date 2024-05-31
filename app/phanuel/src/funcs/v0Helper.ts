@@ -1,7 +1,7 @@
 import * as anchor from '@coral-xyz/anchor';
 import { web3 } from '@coral-xyz/anchor';
-import sendTxn from './sendTxn';
 import { ComputeBudgetProgram } from '@solana/web3.js';
+import shortenAddress from './shortenAddress';
 
 export async function sendV0Transaction(
   connection: web3.Connection,
@@ -109,7 +109,7 @@ export async function initializeLookupTable(
     txid: createLookupTableTxid,
     msg:
       '✅ Lookup table created successfully at ' +
-      lookupTableAddress.toBase58(),
+      shortenAddress(lookupTableAddress.toBase58()),
   });
   // await waitForNewBlock(connection, 10);
   for (var i = 0; i < no_of_slices; i++) {

@@ -104,7 +104,14 @@ export const addMember = async ({
     .transaction();
   sendTxn(program.provider.connection, txn, admin)
     .then((data) => {
-      success(data);
+      if (data.err) {
+        console.error(data.err);
+        if (error) {
+          error(data.err);
+        }
+      } else {
+        success(data);
+      }
     })
     .catch((e) => {
       if (error) {
@@ -124,11 +131,6 @@ export const disableMember = async ({
   success,
   error,
 }: MutMemberProps) => {};
-
-export const mintToAll = async (
-  communityAccountAddress: PublicKey,
-  successCallback: any
-) => {};
 
 export const listCommunityAccounts = async ({
   member,
@@ -214,12 +216,16 @@ export const listAllBagAccounts = async ({
   } catch (e) {
     console.error(e);
   }
-  return (listBagInfo || []).map((r: any) => {
-    return {
-      ...BagInfoSchema.decode(r.account.data),
-      publicKey: r.pubkey,
-    };
-  });
+  return (listBagInfo || [])
+    .map((r: any) => {
+      return {
+        ...BagInfoSchema.decode(r.account.data),
+        publicKey: r.pubkey,
+      };
+    })
+    .sort((a, b) => {
+      return b.decayAt - a.decayAt;
+    });
 };
 
 export default {

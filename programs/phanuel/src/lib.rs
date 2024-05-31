@@ -50,7 +50,7 @@ pub mod phanuel {
 	}
 
 	// transfer
-	pub fn transfer<'c: 'info, 'info>(ctx: Context<'_, '_, 'c, 'info, TransferCtx<'info>>, amount_each_bags: Vec<u64>) -> Result<()> {
-		run_transfer(ctx, amount_each_bags)
+	pub fn transfer<'c: 'info, 'info>(ctx: Context<'_, '_, 'c, 'info, TransferCtx<'info>>, amount_each_bags: Vec<u64>, note: String) -> Result<()> {
+		run_transfer(ctx, amount_each_bags, note)
 	}
 }

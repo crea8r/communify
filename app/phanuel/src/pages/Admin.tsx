@@ -3,16 +3,19 @@ import { getProgram } from '../funcs/config';
 import * as anchor from '@coral-xyz/anchor';
 import React, { useEffect, useState } from 'react';
 import CreateToken from './fragments/CreateToken';
-import { Card } from '../components/ui';
+import { Button, Card, Input } from '../components/ui';
 import Loading from '../components/Loading';
 import { listMembers } from '../services/Member';
 import ManageMember from './fragments/ManageMember';
 import Mint from './fragments/Mint';
 import Stat from './fragments/Stat';
 import AllMembers from './fragments/AllMembers';
+import { update } from '../services/Community';
 
 export const MemberListContext = React.createContext<any>(null);
 export const CommunityAccountContext = React.createContext<any>(null);
+
+const SECONDS_PER_DAY = 86400;
 
 const Admin = () => {
   const program = getProgram();
@@ -23,7 +26,6 @@ const Admin = () => {
   const [loading, setLoading] = useState(false);
   const [members, setMembers] = useState<any[]>([]);
   useEffect(() => {
-    console.log('** Admin useEffect **');
     if (wallet) {
       const [communityAccountPubKey] =
         anchor.web3.PublicKey.findProgramAddressSync(
@@ -40,6 +42,10 @@ const Admin = () => {
             communityAccountPubKey,
           });
           setMembers(_members);
+          setSymbol(data.symbol);
+          setDecayAfter(
+            Math.floor(data.decayAfter?.toNumber() / SECONDS_PER_DAY)
+          );
         } catch (e) {
           console.log('There is no community managed by this wallet');
         }
@@ -49,6 +55,8 @@ const Admin = () => {
       fetchCommunityAccount();
     }
   }, [wallet, rCounter]);
+  const [symbol, setSymbol] = useState('');
+  const [decayAfter, setDecayAfter] = useState(0);
   return (
     <div>
       {loading ? (
@@ -56,16 +64,57 @@ const Admin = () => {
       ) : communityAccount ? (
         <CommunityAccountContext.Provider value={communityAccount}>
           <MemberListContext.Provider value={members}>
-            <Card className='p-6 rounded mb-4 bg-white card'>
-              <div className='flex'>
-                <div className='mr-2'>Token Name:</div>{' '}
-                <div className='font-bold'>${communityAccount.symbol}</div>
-              </div>
-              <div className='flex'>
-                <div className='mr-2'>Expire time: </div>
-                <div className='font-bold'>
-                  {(communityAccount.decayAfter as anchor.BN).toNumber()} day(s)
-                </div>
+            <Card className='p-6 rounded mb-4 bg-white card gap-2 grid'>
+              <div className='mr-2'>Token Name:</div>
+              <Input
+                value={symbol}
+                onChange={(e: any) => {
+                  setSymbol(e.target.value);
+                }}
+              />
+              <div className='mr-2'>Expire time (days): </div>
+              <Input
+                value={decayAfter}
+                onChange={(e: any) => {
+                  setDecayAfter(e.target.value);
+                }}
+              />
+              <div className='flex gap-2'>
+                <Button
+                  className='mt-2'
+                  onClick={(e: any) => {
+                    e.preventDefault();
+                    setLoading(true);
+                    update({
+                      admin: wallet,
+                      tokenSymbol: symbol,
+                      decayTime: decayAfter * SECONDS_PER_DAY,
+                      success: () => {
+                        console.log('trigger success callback');
+                        setRCounter(rCounter + 1);
+                      },
+                      fin: () => {
+                        setLoading(false);
+                      },
+                    });
+                  }}
+                >
+                  Change
+                </Button>
+                <Button
+                  className='mt-2 bg-white'
+                  onClick={() => {
+                    setSymbol(communityAccount.symbol);
+                    setDecayAfter(
+                      Math.floor(
+                        communityAccount.decayAfter?.toNumber() /
+                          SECONDS_PER_DAY
+                      )
+                    );
+                  }}
+                >
+                  Reset
+                </Button>
               </div>
             </Card>
             <div className='flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6'>
