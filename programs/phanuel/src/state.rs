@@ -30,7 +30,7 @@ pub struct MemberInfo {
 	pub community: Pubkey,
 	pub member: Pubkey,
 	pub max: u64,
-	pub status: u8,
+	pub status: u8
 }
 
 impl MemberInfo {

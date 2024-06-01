@@ -30,6 +30,14 @@ To deploy on devnet: `anchor deploy -p phanuel --provider.cluster devnet`
   - [x] Tutorial on Versioned Transaction
   - [x] UI implementation: a dialog to show how many transaction would need (incld. new ALT every mint ~ later improvement)
 - [x] UI to change token configuration
+- [ ] Deploy on communify.online
+- [ ] Contact Blowfish to whitelist
+- [ ] Admin can upload csv file to add mutiple members
+- [ ] Admin can mint token to individuals
+- [ ] Special functions for Superteam
+  - [ ] Members can send request & other can fulfill the request through a telegram bot
+  - [ ] Telegram bot for token transfer
+- [ ] Add id field to member_info ~ id is a generic things
 - [ ] Delete memberInfo & close bags
   - [ ] Instructions
   - [ ] UI implementation
