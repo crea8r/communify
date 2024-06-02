@@ -4,7 +4,7 @@ import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes';
 import idl from '../idl.json';
 import * as borsh from '@coral-xyz/borsh';
 
-const MemoSchema = borsh.struct([
+export const MemoSchema = borsh.struct([
   borsh.publicKey('community'),
   borsh.publicKey('from'),
   borsh.publicKey('to'),

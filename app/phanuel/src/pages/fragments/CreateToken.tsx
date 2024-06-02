@@ -12,7 +12,7 @@ import { useState, useContext } from 'react';
 import * as anchor from '@coral-xyz/anchor';
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
 import Loading from '../../components/Loading';
-import { create } from '../../services/Community';
+import create from '../../services/createCommunity';
 
 const CreateToken = ({ successCallback }: { successCallback: any }) => {
   const [tokenSymbol, setTokenSymbol] = useState('');

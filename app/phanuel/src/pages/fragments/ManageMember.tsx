@@ -10,7 +10,7 @@ import {
 } from '../../components/ui';
 import { useState, useContext } from 'react';
 import { MemberListContext, CommunityAccountContext } from '../Admin';
-import { addMember } from '../../services/Member';
+import addMember from '../../services/addMember';
 import Loading from '../../components/Loading';
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
 import * as anchor from '@coral-xyz/anchor';

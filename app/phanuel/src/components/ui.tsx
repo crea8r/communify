@@ -5,7 +5,9 @@ export const Button = (props: any) => {
   return (
     <>
       {props.disabled ? (
-        <div className={`${clsN} select-none`}>{props.children}</div>
+        <div className={`${clsN} bg-gray-500 select-none`}>
+          {props.children}
+        </div>
       ) : (
         <button className={clsN} onClick={props.onClick}>
           {props.children}

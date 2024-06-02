@@ -9,15 +9,15 @@ import {
   Label,
   Input,
 } from '../components/ui';
-import { listAllBagAccounts, listCommunityAccounts } from '../services/Member';
+import listCommunityAccounts from '../services/listCommunityAccounts';
+import listAllBagAccounts from '../services/listAllBagAccounts';
 import transfer from '../services/transfer';
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
 import * as anchor from '@coral-xyz/anchor';
 import { getProgram } from '../funcs/config';
 import moment from 'moment';
-import { listMembers } from '../services/Member';
+import listMembers from '../services/listMembers';
 import Loading from '../components/Loading';
-import { set } from '@coral-xyz/anchor/dist/cjs/utils/features';
 import SentNotes from './fragments/SentNotes';
 import ReceivedNotes from './fragments/ReceivedNotes';
 

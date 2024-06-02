@@ -5,12 +5,12 @@ import React, { useEffect, useState } from 'react';
 import CreateToken from './fragments/CreateToken';
 import { Button, Card, Input } from '../components/ui';
 import Loading from '../components/Loading';
-import { listMembers } from '../services/Member';
+import listMembers from '../services/listMembers';
 import ManageMember from './fragments/ManageMember';
 import Mint from './fragments/Mint';
 import Stat from './fragments/Stat';
 import AllMembers from './fragments/AllMembers';
-import { update } from '../services/Community';
+import update from '../services/updateCommunity';
 
 export const MemberListContext = React.createContext<any>(null);
 export const CommunityAccountContext = React.createContext<any>(null);

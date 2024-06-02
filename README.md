@@ -25,7 +25,7 @@ To deploy on devnet: `anchor deploy -p phanuel --provider.cluster devnet`
 ### Todo
 
 - [x] Fix netlify deployment
-- [ ] Mint token for multiple users using Versioned Transaction
+- [x] Mint token for multiple users using Versioned Transaction
   - [x] New instruction for multiple mint
   - [x] Tutorial on Versioned Transaction
   - [x] UI implementation: a dialog to show how many transaction would need (incld. new ALT every mint ~ later improvement)
@@ -33,7 +33,9 @@ To deploy on devnet: `anchor deploy -p phanuel --provider.cluster devnet`
 - [ ] Deploy on communify.online
 - [ ] Contact Blowfish to whitelist
 - [ ] Admin can upload csv file to add mutiple members
-- [ ] Admin can mint token to individuals
+  - [x] New instruction for adding multiple members
+  - [ ] UI implementation
+- [x] Admin can mint token to individuals
 - [ ] Special functions for Superteam
   - [ ] Members can send request & other can fulfill the request through a telegram bot
   - [ ] Telegram bot for token transfer

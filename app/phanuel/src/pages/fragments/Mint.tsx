@@ -9,12 +9,14 @@ import {
   Label,
 } from '../../components/ui';
 import { useContext, useState } from 'react';
-import { mintTo, multipleMint } from '../../services/Community';
+import multipleMint from '../../services/multipleMint';
+import mintTo from '../../services/mintTo';
 import { useAnchorWallet } from '@solana/wallet-adapter-react';
 import * as anchor from '@coral-xyz/anchor';
 import { MemberListContext } from '../Admin';
 import shortenAddress from '../../funcs/shortenAddress';
 import Loading from '../../components/Loading';
+import { set } from '@coral-xyz/anchor/dist/cjs/utils/features';
 
 const Mint = () => {
   const [tokenAmount, setTokenAmount] = useState(0);
@@ -22,8 +24,13 @@ const Mint = () => {
   const admin = useAnchorWallet() as anchor.Wallet;
   const memberPDAs = useContext(MemberListContext);
   const [mintTxns, setMintTxns] = useState<any[]>([]);
-  const [errorMsg, setErrMsg] = useState();
-  const [successMsg, setSuccessMsg] = useState();
+  const [errorMsg, setErrMsg] = useState('');
+  const [successMsg, setSuccessMsg] = useState('');
+  const [memberAddress, setMemberAddress] = useState('');
+  const reset = () => {
+    setTokenAmount(0);
+    setMemberAddress('');
+  };
   return (
     <Card>
       <CardHeader>
@@ -35,7 +42,18 @@ const Mint = () => {
       <CardContent>
         <form className='grid gap-4'>
           <div className='grid gap-2'>
-            <Label htmlFor='token-amount'>Amount Per Member</Label>
+            <Label htmlFor='token-amount'>Member Address</Label>
+            <Input
+              type='string'
+              value={memberAddress}
+              onChange={(e: any) => {
+                setMemberAddress(e.target.value);
+              }}
+              disabled={loading}
+            />
+          </div>
+          <div className='grid gap-2'>
+            <Label htmlFor='token-amount'>Amount (Per Member)</Label>
             <Input
               id='token-amount'
               min='1'
@@ -50,26 +68,58 @@ const Mint = () => {
           </div>
           <Button
             onClick={(e: any) => {
+              setErrMsg('');
+              setSuccessMsg('');
+              setMintTxns([]);
               e.preventDefault();
               setLoading(true);
-              multipleMint({
-                admin,
-                receivers: memberPDAs.map((m: any) => m.member),
-                amount: tokenAmount,
-                info: (data: any[]) => {
-                  console.log('set info: ', [...data]);
-                  setMintTxns([...data]);
-                },
-                success: (msg: any) => {
-                  setSuccessMsg(msg);
+              if (memberAddress) {
+                try {
+                  let member = new anchor.web3.PublicKey(memberAddress);
+                  if (!memberPDAs.find((m: any) => m.member.equals(member))) {
+                    throw new Error('Member not found');
+                  }
+                  mintTo({
+                    admin,
+                    receiver: member,
+                    amount: tokenAmount,
+                    success: () => {
+                      setSuccessMsg('Mint successfully!');
+                      setLoading(false);
+                      reset();
+                    },
+                    error: () => {
+                      setErrMsg('Cannot mint');
+                      setLoading(false);
+                    },
+                  });
+                } catch (e: any) {
+                  setErrMsg(e.message);
                   setLoading(false);
-                },
-                error: (msg: any) => {
-                  setErrMsg(msg);
-                  setLoading(false);
-                },
-              });
+                  return;
+                }
+              } else {
+                multipleMint({
+                  admin,
+                  receivers: memberPDAs.map((m: any) => m.member),
+                  amount: tokenAmount,
+                  info: (data: any[]) => {
+                    console.log('set info: ', [...data]);
+                    setMintTxns([...data]);
+                  },
+                  success: (msg: any) => {
+                    setSuccessMsg(msg);
+                    setLoading(false);
+                    reset();
+                  },
+                  error: (msg: any) => {
+                    setErrMsg(msg);
+                    setLoading(false);
+                  },
+                });
+              }
             }}
+            disabled={loading}
           >
             Mint and Send{' '}
             {tokenAmount
