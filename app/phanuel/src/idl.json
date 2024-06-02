@@ -109,6 +109,47 @@
       "args": []
     },
     {
+      "name": "add_multiple_member",
+      "discriminator": [
+        162,
+        184,
+        129,
+        166,
+        149,
+        17,
+        216,
+        56
+      ],
+      "accounts": [
+        {
+          "name": "community_account",
+          "writable": true
+        },
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "community_account"
+          ]
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "phanuel_program",
+          "address": "Pha5A3BB4xKRZDs8ycvukFUagaKvk3AQBaH3J5qwAok"
+        }
+      ],
+      "args": [
+        {
+          "name": "no_of_member",
+          "type": "u8"
+        }
+      ]
+    },
+    {
       "name": "change_admin_and_fee",
       "discriminator": [
         23,
@@ -737,6 +778,11 @@
       "code": 6008,
       "name": "InvalidBagPDA",
       "msg": "Invalid Bag PDA"
+    },
+    {
+      "code": 6009,
+      "name": "ExceedNumberOfMember",
+      "msg": "Exceed Number of Member"
     }
   ],
   "types": [

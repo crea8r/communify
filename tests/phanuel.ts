@@ -173,6 +173,87 @@ describe('phanuel', () => {
       assert.ok(false);
     }
   });
+  it('Add multiple members', async () => {
+    // generate randome keypair; MAX=19!
+    const no_member = 100;
+    const keypairs = [];
+    const memberInfoAccounts = [];
+    const memberAccounts = [];
+    const MAX_PER_INS = 18;
+    for (var i = 0; i < no_member; i++) {
+      keypairs.push(Keypair.generate());
+      memberAccounts.push({
+        pubkey: keypairs[i].publicKey,
+        isSigner: false,
+        isWritable: false,
+      });
+      const [memberInfoPDA] = anchor.web3.PublicKey.findProgramAddressSync(
+        [
+          Buffer.from('User'),
+          TokenPDA.toBuffer(),
+          keypairs[i].publicKey.toBuffer(),
+        ],
+        program.programId
+      );
+      memberInfoAccounts.push({
+        pubkey: memberInfoPDA,
+        isSigner: false,
+        isWritable: true,
+      });
+    }
+    const remainingAccounts = [...memberInfoAccounts, ...memberAccounts];
+    const connection = anchor.getProvider().connection;
+    const lookupTableAddress = await initializeLookupTable(
+      admin,
+      connection,
+      remainingAccounts.map((ac) => ac.pubkey)
+    );
+    await waitForNewBlock(connection, 1);
+    const lookupTableAccounts = (
+      await connection.getAddressLookupTable(lookupTableAddress)
+    ).value;
+    if (!lookupTableAccounts) {
+      throw new Error('Lookup table accounts not found');
+    }
+    const multipleAddMembersAccounts = {
+      communityAccount: TokenPDA,
+      admin: admin.publicKey,
+      phanuelProgram: program.programId,
+      systemProgram: anchor.web3.SystemProgram.programId,
+    };
+    // split const memberInfoAccounts, BagAccounts into group of MAX_PER_INS
+    for (var i = 0; i < Math.ceil(no_member / MAX_PER_INS); i++) {
+      const start = i * MAX_PER_INS;
+      const end =
+        start + MAX_PER_INS > no_member ? no_member : start + MAX_PER_INS;
+      const memberSlice = memberAccounts.slice(start, end);
+      const memberInfoSlice = memberInfoAccounts.slice(start, end);
+      const remainingAccountsSlice = [...memberSlice, ...memberInfoSlice];
+      const addMemberIns = await program.methods
+        .addMultipleMember(memberSlice.length)
+        .accounts(multipleAddMembersAccounts)
+        .remainingAccounts(remainingAccountsSlice)
+        .instruction();
+      await sendV0Transaction(
+        connection,
+        admin,
+        [addMemberIns],
+        [lookupTableAccounts]
+      );
+    }
+    // TODO: deactive and close
+    let idx = 0;
+    try {
+      for (var i = 0; i < memberAccounts.length; i++) {
+        const memberInfo = await program.account.memberInfo.fetch(
+          memberInfoAccounts[i].pubkey
+        );
+        idx = i;
+      }
+    } catch (e: any) {
+      assert.ok(false, 'Cannot find member at ' + idx);
+    }
+  });
   it('Disable & Remove member', async () => {
     const addMembersAccounts = {
       communityAccount: TokenPDA,

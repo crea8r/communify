@@ -32,6 +32,9 @@ pub mod phanuel {
 	pub fn add_member(ctx: Context<AddMemberCtx>) -> Result<()> {
 		run_add_member(ctx)
 	}
+	pub fn add_multiple_member<'c: 'info, 'info>(ctx: Context<'_, '_, 'c, 'info, AddMultipleMemberCtx<'info>>, no_of_member:u8) -> Result<()>{
+		run_add_multiple_member(ctx, no_of_member)
+	}
 	pub fn remove_member(ctx: Context<CloseMemberCtx>) -> Result<()>{
 		run_remove_member(ctx)
 	}

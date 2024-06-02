@@ -20,4 +20,6 @@ pub enum ErrorCode {
 	pub InvalidNumberOfMint,
 	#[msg("Invalid Bag PDA")]
 	pub InvalidBagPDA,
+	#[msg("Exceed Number of Member")]
+	pub ExceedNumberOfMember,
 }

@@ -115,6 +115,47 @@ export type Phanuel = {
       "args": []
     },
     {
+      "name": "addMultipleMember",
+      "discriminator": [
+        162,
+        184,
+        129,
+        166,
+        149,
+        17,
+        216,
+        56
+      ],
+      "accounts": [
+        {
+          "name": "communityAccount",
+          "writable": true
+        },
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "communityAccount"
+          ]
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "phanuelProgram",
+          "address": "Pha5A3BB4xKRZDs8ycvukFUagaKvk3AQBaH3J5qwAok"
+        }
+      ],
+      "args": [
+        {
+          "name": "noOfMember",
+          "type": "u8"
+        }
+      ]
+    },
+    {
       "name": "changeAdminAndFee",
       "discriminator": [
         23,
@@ -743,6 +784,11 @@ export type Phanuel = {
       "code": 6008,
       "name": "invalidBagPda",
       "msg": "Invalid Bag PDA"
+    },
+    {
+      "code": 6009,
+      "name": "exceedNumberOfMember",
+      "msg": "Exceed Number of Member"
     }
   ],
   "types": [
