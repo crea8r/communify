@@ -1,13 +1,5 @@
 import { getProgram } from '../funcs/config';
 import * as anchor from '@coral-xyz/anchor';
-import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes';
-import idl from '../idl.json';
-import { PublicKey } from '@solana/web3.js';
-import {
-  MemberInfoAccountSchema,
-  FullMemberInfoAccountSchema,
-  BagInfoSchema,
-} from './_schemas';
 import sendTxn from '../funcs/sendTxn';
 import { MutMemberProps } from './_types';
 

@@ -19,6 +19,14 @@ export type MultipleMintProps = {
   error: any;
 };
 
+export type MultipleAddMemberProps = {
+  admin: anchor.Wallet;
+  newMembers: PublicKey[];
+  info: any;
+  success: any;
+  error: any;
+};
+
 export type MutMemberProps = {
   admin: anchor.Wallet;
   communityAccountPubKey: PublicKey;
