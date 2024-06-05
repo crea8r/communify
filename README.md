@@ -32,9 +32,9 @@ To deploy on devnet: `anchor deploy -p phanuel --provider.cluster devnet`
 - [x] UI to change token configuration
 - [ ] Deploy on communify.online
 - [ ] Contact Blowfish to whitelist
-- [ ] Admin can upload csv file to add mutiple members
+- [x] Admin can upload csv file to add mutiple members
   - [x] New instruction for adding multiple members
-  - [ ] UI implementation
+  - [x] UI implementation
 - [x] Admin can mint token to individuals
 - [ ] Special functions for Superteam
   - [ ] Members can send request & other can fulfill the request through a telegram bot

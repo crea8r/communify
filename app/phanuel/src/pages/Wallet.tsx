@@ -92,6 +92,8 @@ const Wallet = () => {
     };
     load();
   }, [member]);
+  const [currentPage, setCurrentPage] = useState(0);
+  const pageSize = 9;
   return (
     <div>
       <Card className='mb-4'>
@@ -150,21 +152,48 @@ const Wallet = () => {
                     }
                   </div>
                   <div className='flex-1 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-2'>
-                    {bags.map((bag) => {
-                      return (
-                        <div
-                          className={`flex flex-col gap-2 border p-3 rounded ${
-                            bag.decayed ? 'bg-gray-100 text-gray-400' : ''
-                          }`}
-                          key={bag.publicKey.toBase58()}
-                        >
-                          <Label>💰 {bag.amount.toNumber()}</Label>
-                          <Label>
-                            {moment(bag.decayAt.toNumber() * 1000).fromNow()}
-                          </Label>
-                        </div>
-                      );
-                    })}
+                    {bags
+                      .slice(
+                        currentPage * pageSize,
+                        (currentPage + 1) * pageSize
+                      )
+                      .map((bag) => {
+                        return (
+                          <div
+                            className={`flex flex-col gap-2 border p-3 rounded ${
+                              bag.decayed ? 'bg-gray-100 text-gray-400' : ''
+                            }`}
+                            key={bag.publicKey.toBase58()}
+                          >
+                            <Label>💰 {bag.amount.toNumber()}</Label>
+                            <Label>
+                              {moment(bag.decayAt.toNumber() * 1000).fromNow()}
+                            </Label>
+                          </div>
+                        );
+                      })}
+                  </div>
+                  <div className='flex gap-2 mt-2'>
+                    <div
+                      className='cursor-pointer hover:text-blue-500'
+                      onClick={() => {
+                        currentPage > 0
+                          ? setCurrentPage(currentPage - 1)
+                          : null;
+                      }}
+                    >
+                      Prev
+                    </div>
+                    <div
+                      className='cursor-pointer hover:text-blue-500'
+                      onClick={() => {
+                        currentPage * pageSize < bags.length
+                          ? setCurrentPage(currentPage + 1)
+                          : null;
+                      }}
+                    >
+                      Next
+                    </div>
                   </div>
                 </>
               )}
