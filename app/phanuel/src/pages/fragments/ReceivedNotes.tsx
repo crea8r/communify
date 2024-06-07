@@ -21,6 +21,8 @@ const ReceivedNotes = ({
       loadNotes();
     }
   }, [member, community]);
+  const [pageIndex, setPageIndex] = useState(0);
+  const pageSize = 3;
   return (
     <Card>
       <CardHeader>
@@ -29,17 +31,41 @@ const ReceivedNotes = ({
 
       <CardContent className='grid gap-2'>
         {notes.length === 0 && <p>No notes received. Try to help others!</p>}
-        {notes.map((n, idx) => {
-          return (
-            <div key={`note-${idx}`}>
-              <p>
-                From: {shortenAddress(n.from.toBase58())}, {n.amount.toNumber()}{' '}
-                tokens
-              </p>
-              <div className='p-2 border rounded-lg'>{n.note}</div>
-            </div>
-          );
-        })}
+        {notes
+          .slice(pageIndex * pageSize, (pageIndex + 1) * pageSize)
+          .map((n, idx) => {
+            return (
+              <div key={`note-${idx}`}>
+                <p>
+                  From: {shortenAddress(n.from.toBase58())},{' '}
+                  {n.amount.toNumber()} tokens
+                </p>
+                <div className='p-2 border rounded-lg'>{n.note}</div>
+              </div>
+            );
+          })}
+        <div className='flex gap-2'>
+          <div
+            className='cursor-pointer hover:text-blue-500'
+            onClick={() => {
+              if (pageIndex > 0) {
+                setPageIndex(pageIndex - 1);
+              }
+            }}
+          >
+            Prev
+          </div>
+          <div
+            className='cursor-pointer hover:text-blue-500'
+            onClick={() => {
+              if (notes.length > (pageIndex + 1) * pageSize) {
+                setPageIndex(pageIndex + 1);
+              }
+            }}
+          >
+            Next
+          </div>
+        </div>
       </CardContent>
     </Card>
   );

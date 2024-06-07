@@ -104,6 +104,7 @@ const ManageMember = ({ successCallback }: { successCallback: any }) => {
                 type='file'
                 name='file'
                 onChange={(e: any) => {
+                  setLoading(true);
                   Papa.parse(e.target.files[0], {
                     complete: (result: any) => {
                       if (result.data.length > MAX_UPLOAD_ADDRESSES) {
@@ -140,10 +141,12 @@ const ManageMember = ({ successCallback }: { successCallback: any }) => {
                             },
                             success: (data: any) => {
                               alert('Members added successfully');
+                              setLoading(false);
                               successCallback();
                             },
                             error: (e: any) => {
                               alert(e.message);
+                              setLoading(false);
                             },
                           });
                         } catch (err: any) {

@@ -47,7 +47,6 @@ const Wallet = () => {
       }
       setLoading(false);
     };
-    console.log('** Wallet useEffect - selectedCommunity **');
     const loadBag = async (community: any) => {
       const bags = await listAllBagAccounts({
         community,
@@ -60,7 +59,6 @@ const Wallet = () => {
         if (d < new Date()) {
           bag.decayed = true;
         } else {
-          console.log('bag.amount.toNumber(): ', bag.amount.toNumber());
           _total += bag.amount.toNumber();
         }
       });
@@ -88,6 +86,9 @@ const Wallet = () => {
           rs.push({ ...info, address: data.community });
         }
         setCommunityAccounts(rs);
+        if (rs.length > 0) {
+          setSelectedCommunity(rs[0].address.toBase58());
+        }
       }
     };
     load();
