@@ -1,5 +1,8 @@
 const { getSessions } = require('../state/sessions');
 const constants = require('../constants');
+const anchor = require('@coral-xyz/anchor');
+const { getConnection } = require('../state/connection');
+const { CommunityAccountSchema } = require('../services/_scheme');
 
 // to register group id
 const register = (ctx) => {
@@ -10,13 +13,29 @@ const register = (ctx) => {
     sessions[username].session &&
     sessions[username].publicKey
   ) {
-    console.log(ctx);
-    console.log(sessions[username].publicKey);
-    anchor.web3.PublicKey.findProgramAddressSync(
+    const chatId = ctx.update.message.chat.id;
+    const connection = getConnection();
+    const [communityAccount] = anchor.web3.PublicKey.findProgramAddressSync(
       [Buffer.from('MINT'), wallet.publicKey.toBuffer()],
       constants.programId
     );
-    return ctx.reply('You are already connected!');
+    try {
+      connection.getAccountInfo(communityAccount).then((accountInfo) => {
+        console.log(accountInfo.data);
+        const info = CommunityAccountSchema.decode(accountInfo.data);
+        return ctx.reply(
+          'You are admin of ' +
+            info.symbol +
+            ', now I will connect that with chatId ' +
+            chatId +
+            '!'
+        );
+      });
+    } catch (e) {
+      return ctx.reply(
+        'You are not admin of any community. Please go to https://communify.com to create one!'
+      );
+    }
   }
 };
 

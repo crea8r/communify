@@ -19,21 +19,9 @@ const commandRegister = require('./commands/register');
 const handlerMeta = require('./handlers/meta');
 const handlerConnect = require('./handlers/connect');
 
-const sessions = {};
 // example: https://github.com/phantom/deep-link-demo-app/blob/20f19f2154e98699f0d5a6b28bc4bb3d5acbcefd/App.tsx
-
 const bot = new Telegraf(process.env.BOT_TOKEN);
-
 // setup connection to solana devnet
-const connection = new web3.Connection(process.env.SOLANA_RPC_URL, {
-  commitment: 'finalized',
-});
-createTransferTxn({
-  connection,
-  sender: 'sender',
-  receiver: 'receiver',
-  amount: 100,
-});
 
 bot.start(commandStart);
 bot.command('disconnect', commandDisconnect);
