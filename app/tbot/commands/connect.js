@@ -1,6 +1,7 @@
 const { getSessions } = require('../state/sessions');
 const bs58 = require('bs58');
 const { Markup } = require('telegraf');
+const nacl = require('tweetnacl');
 
 const connect = (ctx) => {
   const sessions = getSessions();
