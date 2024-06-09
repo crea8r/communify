@@ -1,3 +1,5 @@
+const { getSessions } = require('../state/sessions');
+
 const start = (ctx) => {
   console.log('start payload:', ctx.payload);
   if (ctx.payload) {
@@ -7,7 +9,12 @@ const start = (ctx) => {
     } catch (e) {}
   }
   const username = ctx.update.message.from.username;
-  if (isConnected(username)) {
+  const sessions = getSessions();
+  if (
+    sessions[username] &&
+    sessions[username].session &&
+    sessions[username].publicKey
+  ) {
     return ctx.reply(
       'Welcome back ' +
         sessions[username].publicKey +
