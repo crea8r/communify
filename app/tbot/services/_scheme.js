@@ -1,5 +1,6 @@
 const borsh = require('@coral-xyz/borsh');
 const CommunityAccountSchema = borsh.struct([
+  borsh.u8('discriminator'),
   borsh.u64('decay_after'),
   borsh.publicKey('admin'),
   borsh.str('symbol'),
