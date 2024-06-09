@@ -1,4 +1,5 @@
 const { getSessions } = require('../state/sessions');
+const constants = require('../constants');
 
 // to register group id
 const register = (ctx) => {
@@ -13,7 +14,7 @@ const register = (ctx) => {
     console.log(sessions[username].publicKey);
     anchor.web3.PublicKey.findProgramAddressSync(
       [Buffer.from('MINT'), wallet.publicKey.toBuffer()],
-      program.programId
+      constants.programId
     );
     return ctx.reply('You are already connected!');
   }

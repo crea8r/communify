@@ -2,6 +2,7 @@ const { getSessions } = require('../state/sessions');
 const bs58 = require('bs58');
 const { Markup } = require('telegraf');
 const nacl = require('tweetnacl');
+const constants = require('../constants');
 
 const connect = (ctx) => {
   const sessions = getSessions();
@@ -25,12 +26,12 @@ const connect = (ctx) => {
         Markup.button.url(
           'Open Phantom Wallet',
           'https://phantom.app/ul/v1/connect?app_url=' +
-            metaDataURI +
+            constants.metaDataURI +
             '&dapp_encryption_public_key=' +
             bs58.encode(kp.publicKey) +
             '&cluster=devnet' +
             '&redirect_link=' +
-            encodeURI(connectURI + '?username=' + username)
+            encodeURI(constants.connectURI + '?username=' + username)
         ),
       ])
     );
