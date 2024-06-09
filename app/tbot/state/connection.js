@@ -1,4 +1,5 @@
-const connection = new web3.Connection(process.env.SOLANA_RPC_URL, {
+const anchor = require('@coral-xyz/anchor');
+const connection = new anchor.web3.Connection(process.env.SOLANA_RPC_URL, {
   commitment: 'finalized',
 });
 
