@@ -1,6 +1,8 @@
 const { decryptPayload } = require('../utils');
 const { getSessions } = require('../state/sessions');
 const bs58 = require('bs58');
+const nacl = require('tweetnacl');
+const constants = require('../constants');
 
 const connect = (req, res) => {
   console.log(req.query);
@@ -21,8 +23,13 @@ const connect = (req, res) => {
   const connectData = decryptPayload(data, nonce, sharedSecretDapp);
   sessions[username].session = connectData.session;
   sessions[username].publicKey = connectData.public_key;
+  // should go back where he came from!
   return res.render('connect', {
-    url: 'https://t.me/' + botName + '?start=' + sessions[username].publicKey,
+    url:
+      'https://t.me/' +
+      constants.botName +
+      '?start=' +
+      sessions[username].publicKey,
   });
 };
 
