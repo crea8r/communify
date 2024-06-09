@@ -4,17 +4,15 @@ import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes';
 import idl from '../idl.json';
 import { MemoSchema } from './_schemas';
 
-const listReceivedNotes = async ({
-  member,
+const fetchAllMemo = async ({
   community,
 }: {
-  member: anchor.web3.PublicKey;
   community: anchor.web3.PublicKey;
 }) => {
   const program = getProgram();
-  let receivedNotes;
+  let allMemos;
   try {
-    receivedNotes = await program.provider.connection.getProgramAccounts(
+    allMemos = await program.provider.connection.getProgramAccounts(
       program.programId,
       {
         dataSlice: { offset: 8, length: 32 + 32 + 32 + 64 + 50 },
@@ -34,17 +32,11 @@ const listReceivedNotes = async ({
               bytes: community.toBase58(),
             },
           },
-          {
-            memcmp: {
-              offset: 8 + 32 + 32,
-              bytes: member.toBase58(),
-            },
-          },
         ],
       }
     );
   } catch (err) {}
-  return (receivedNotes || [])
+  return (allMemos || [])
     .map((r: any) => {
       return {
         ...MemoSchema.decode(r.account.data),
@@ -56,4 +48,4 @@ const listReceivedNotes = async ({
     });
 };
 
-export default listReceivedNotes;
+export default fetchAllMemo;

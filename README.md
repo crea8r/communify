@@ -30,7 +30,7 @@ To deploy on devnet: `anchor deploy -p phanuel --provider.cluster devnet`
   - [x] Tutorial on Versioned Transaction
   - [x] UI implementation: a dialog to show how many transaction would need (incld. new ALT every mint ~ later improvement)
 - [x] UI to change token configuration
-- [ ] Deploy on communify.online
+- [x] Deploy on communify.online
 - [ ] Contact Blowfish to whitelist
 - [x] Admin can upload csv file to add mutiple members
   - [x] New instruction for adding multiple members

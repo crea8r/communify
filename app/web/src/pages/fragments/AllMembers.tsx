@@ -19,8 +19,8 @@ const AllMembers = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Community Activity</CardTitle>
-        <CardDescription>View the latest community activities.</CardDescription>
+        <CardTitle>All community members</CardTitle>
+        <CardDescription>List of all your members.</CardDescription>
       </CardHeader>
       <CardContent>
         <div className='grid gap-4'>

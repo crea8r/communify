@@ -1,18 +1,8 @@
 import { getProgram } from '../funcs/config';
 import * as anchor from '@coral-xyz/anchor';
-import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes';
-import idl from '../idl.json';
 import { PublicKey } from '@solana/web3.js';
-import * as borsh from '@coral-xyz/borsh';
 import sendTxn from '../funcs/sendTxn';
-
-const CLOCK_LAYOUT = borsh.struct([
-  borsh.u64('slot'),
-  borsh.u64('epoch_start_timestamp'),
-  borsh.u64('epoch'),
-  borsh.u64('leader_schedule_epoch'),
-  borsh.u64('unix_timestamp'),
-]);
+import { CLOCK_LAYOUT } from './_schemas';
 
 export const transfer = async ({
   sender,

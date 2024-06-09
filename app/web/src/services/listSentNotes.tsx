@@ -2,15 +2,7 @@ import { getProgram } from '../funcs/config';
 import * as anchor from '@coral-xyz/anchor';
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes';
 import idl from '../idl.json';
-import * as borsh from '@coral-xyz/borsh';
-
-const MemoSchema = borsh.struct([
-  borsh.publicKey('community'),
-  borsh.publicKey('from'),
-  borsh.publicKey('to'),
-  borsh.u64('amount'),
-  borsh.str('note'),
-]);
+import { MemoSchema } from './_schemas';
 
 const listSentNotes = async ({
   member,
