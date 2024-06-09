@@ -1,4 +1,4 @@
-const borsh = require('borsh');
+const borsh = require('@coral-xyz/borsh');
 const CommunityAccountSchema = borsh.struct([
   borsh.u64('decay_after'),
   borsh.publicKey('admin'),
