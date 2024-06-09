@@ -15,7 +15,9 @@ const register = (ctx) => {
   ) {
     const chatId = ctx.update.message.chat.id;
     const connection = getConnection();
-    const userPublicKey = new anchor.PublicKey(sessions[username].publicKey);
+    const userPublicKey = new anchor.web3.PublicKey(
+      sessions[username].publicKey
+    );
     const [communityAccount] = anchor.web3.PublicKey.findProgramAddressSync(
       [Buffer.from('MINT'), userPublicKey.toBuffer()],
       constants.programId
