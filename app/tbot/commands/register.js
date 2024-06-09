@@ -19,4 +19,30 @@ const register = (ctx) => {
   }
 };
 
+// ctx.update.message.chat.id is the group id
+/**
+ * {
+  update_id: 749989025,
+  message: {
+    message_id: 217,
+    from: {
+      id: 6422334977,
+      is_bot: false,
+      first_name: 'Justin',
+      last_name: '🔨🇬🇧',
+      username: 'JustInSolana'
+    },
+    chat: {
+      id: -1002002393144,
+      title: 'Communify',
+      username: 'communifysol',
+      type: 'supergroup'
+    },
+    date: 1717934254,
+    text: '/connect',
+    entities: [ [Object] ]
+  }
+}
+ */
+
 module.exports = register;

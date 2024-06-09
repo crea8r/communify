@@ -1,9 +1,9 @@
-const { getSession } = require('../state/sessions');
+const { getSessions } = require('../state/sessions');
 const bs58 = require('bs58');
 const { Markup } = require('telegraf');
 
 const connect = (ctx) => {
-  const sessions = getSession();
+  const sessions = getSessions();
   const username = ctx.update.message.from.username;
   if (
     sessions[username] &&
