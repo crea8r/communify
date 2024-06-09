@@ -30,9 +30,7 @@ pub struct MemberInfo {
 	pub community: Pubkey,
 	pub member: Pubkey,
 	pub max: u64,
-	pub status: u8,
-	#[max_len(50)]
-	pub id: String
+	pub status: u8
 }
 
 impl MemberInfo {
@@ -67,3 +65,5 @@ pub struct Memo {
 impl Memo {
 	pub const SEED: &'static [u8] = b"Memo";
 }
+
+// need to store member telegram username and community telegram group chat

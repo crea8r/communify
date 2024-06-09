@@ -39,7 +39,7 @@ To deploy on devnet: `anchor deploy -p phanuel --provider.cluster devnet`
 - [ ] Special functions for Superteam
   - [ ] Members can send request & other can fulfill the request through a telegram bot
   - [ ] Telegram bot for token transfer
-- [ ] Add id field to member_info ~ id is a generic things
+- [ ] Add telegram account, linked to memberInfo and communityAccount
 - [ ] Delete memberInfo & close bags
   - [ ] Instructions
   - [ ] UI implementation
