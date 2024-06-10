@@ -55,12 +55,12 @@ pub struct MutMultipleMemberTelegramCtx<'info> {
 	pub system_program: Program<'info, System>,
 }
 
-pub fn run_add_multiple_member_telegram<'c: 'info, 'info>(ctx: Context<'_, '_, 'c, 'info, MutMultipleMemberTelegramCtx<'info>>, no_of_member: u8, usernames: Vec<String>) -> Result<()> {
+pub fn run_add_multiple_member_telegram<'c: 'info, 'info>(_ctx: Context<'_, '_, 'c, 'info, MutMultipleMemberTelegramCtx<'info>>, _no_of_member: u8, _usernames: Vec<String>) -> Result<()> {
   // TODO: in remainingAccounts, first half is member_info, second half is the new telegram_member_info
   Ok(())
 }
 
-pub fn run_edit_multiple_member_telegram<'c: 'info, 'info>(ctx: Context<'_, '_, 'c, 'info, MutMultipleMemberTelegramCtx<'info>>, no_of_member: u8, usernames: Vec<String>) -> Result<()> {
+pub fn run_edit_multiple_member_telegram<'c: 'info, 'info>(_ctx: Context<'_, '_, 'c, 'info, MutMultipleMemberTelegramCtx<'info>>, _no_of_member: u8, _usernames: Vec<String>) -> Result<()> {
   // TODO: in remainingAccounts, first half is member_info, second half is the to-edit telegram_member_info
   Ok(())
 }

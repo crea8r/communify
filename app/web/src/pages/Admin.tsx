@@ -11,6 +11,7 @@ import Mint from './fragments/Mint';
 import Stat from './fragments/Stat';
 import AllMembers from './fragments/AllMembers';
 import update from '../services/updateCommunity';
+import upsertCommunityTelegram from '../services/upsertCommunityTelegram';
 
 export const MemberListContext = React.createContext<any>(null);
 export const CommunityAccountContext = React.createContext<any>(null);
@@ -37,12 +38,29 @@ const Admin = () => {
           const data = await program.account.communityAccount.fetch(
             communityAccountPubKey
           );
-          setCommunityAccount({ ...data, publicKey: communityAccountPubKey });
+          const [communityTelegramPDA] =
+            anchor.web3.PublicKey.findProgramAddressSync(
+              [Buffer.from('Telegram'), communityAccountPubKey.toBuffer()],
+              program.programId
+            );
+          let telegramChatId = '';
+          try {
+            const telegramData = await program.account.telegramCommunity.fetch(
+              communityTelegramPDA
+            );
+            telegramChatId = telegramData.chatId.toString();
+          } catch (e) {}
+          setCommunityAccount({
+            ...data,
+            publicKey: communityAccountPubKey,
+            telegramChatId,
+          });
           const _members = await listMembers({
             communityAccountPubKey,
           });
           setMembers(_members);
           setSymbol(data.symbol);
+          setTelegramChatId(telegramChatId);
           setDecayAfter(
             Math.floor(data.decayAfter?.toNumber() / SECONDS_PER_DAY)
           );
@@ -57,6 +75,7 @@ const Admin = () => {
   }, [wallet, rCounter]);
   const [symbol, setSymbol] = useState('');
   const [decayAfter, setDecayAfter] = useState(0);
+  const [telegramChatId, setTelegramChatId] = useState('');
   return (
     <div>
       {loading ? (
@@ -111,6 +130,53 @@ const Admin = () => {
                           SECONDS_PER_DAY
                       )
                     );
+                  }}
+                >
+                  Reset
+                </Button>
+              </div>
+              <hr />
+              <div className='mr-2'>
+                Community Chat Id: (Guideline{' '}
+                <a
+                  target='_blank'
+                  href='https://hieub.notion.site/How-to-find-Chat-Id-of-your-community-98be44c27d2b4a1cbdbabbbbf167fd56?pvs=4'
+                >
+                  here
+                </a>
+                )
+              </div>
+              <Input
+                value={telegramChatId}
+                onChange={(e: any) => {
+                  setTelegramChatId(e.target.value);
+                }}
+              />
+              <div className='flex gap-2'>
+                <Button
+                  className='mt-2'
+                  onClick={(e: any) => {
+                    e.preventDefault();
+                    setLoading(true);
+                    upsertCommunityTelegram({
+                      admin: wallet,
+                      chatId: telegramChatId,
+                      success: () => {
+                        console.log('trigger success callback');
+                        setRCounter(rCounter + 1);
+                      },
+                      fin: () => {
+                        setLoading(false);
+                      },
+                    });
+                  }}
+                >
+                  Change Telegram Chat Id
+                </Button>
+                <Button
+                  className='mt-2 bg-white'
+                  onClick={() => {
+                    setTelegramChatId(communityAccount.telegramChatId);
                   }}
                 >
                   Reset

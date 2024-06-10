@@ -33,7 +33,6 @@ const Stat = () => {
     }
   };
   const linkOver = function (event: any, d: any) {
-    console.log(d);
     const tooltipDiv = tooltipRef.current;
     if (tooltipDiv) {
       d3.select(tooltipDiv).transition().duration(200).style('opacity', 0.9);
@@ -139,7 +138,6 @@ const Stat = () => {
     // Run the simulation to completion
     for (let i = 0; i < 300; ++i) simulation.tick();
   }, [nodes, interactions]);
-  console.log(nodes, interactions);
   return (
     <Card>
       <CardHeader>

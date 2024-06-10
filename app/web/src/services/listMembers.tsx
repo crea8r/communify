@@ -39,12 +39,18 @@ const listMembers = async ({
   } catch (e) {
     console.error(e);
   }
-  return (listMemberInfo || []).map((r: any) => {
-    return {
-      ...MemberInfoAccountSchema.decode(r.account.data),
-      publicKey: r.pubkey,
-    };
-  });
+  return (listMemberInfo || [])
+    .map((r: any) => {
+      return {
+        ...MemberInfoAccountSchema.decode(r.account.data),
+        publicKey: r.pubkey,
+      };
+    })
+    .sort((a: any, b: any) => {
+      const na = new anchor.BN(a.member.toBytes());
+      const nb = new anchor.BN(b.member.toBytes());
+      return nb.ucmp(na);
+    });
 };
 
 export default listMembers;
