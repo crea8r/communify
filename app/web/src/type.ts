@@ -156,6 +156,48 @@ export type Phanuel = {
       ]
     },
     {
+      "name": "addMultipleMemberTelegram",
+      "discriminator": [
+        39,
+        89,
+        22,
+        204,
+        222,
+        29,
+        16,
+        255
+      ],
+      "accounts": [
+        {
+          "name": "communityAccount"
+        },
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "communityAccount"
+          ]
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "noOfMember",
+          "type": "u8"
+        },
+        {
+          "name": "usernames",
+          "type": {
+            "vec": "string"
+          }
+        }
+      ]
+    },
+    {
       "name": "changeAdminAndFee",
       "discriminator": [
         23,
@@ -295,6 +337,48 @@ export type Phanuel = {
         }
       ],
       "args": []
+    },
+    {
+      "name": "editMultipleMemberTelegram",
+      "discriminator": [
+        119,
+        151,
+        122,
+        180,
+        172,
+        140,
+        19,
+        147
+      ],
+      "accounts": [
+        {
+          "name": "communityAccount"
+        },
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "communityAccount"
+          ]
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "noOfMember",
+          "type": "u8"
+        },
+        {
+          "name": "usernames",
+          "type": {
+            "vec": "string"
+          }
+        }
+      ]
     },
     {
       "name": "initialize",
@@ -478,6 +562,137 @@ export type Phanuel = {
         {
           "name": "amount",
           "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "mutCommunityTelegram",
+      "discriminator": [
+        142,
+        248,
+        144,
+        128,
+        60,
+        179,
+        78,
+        248
+      ],
+      "accounts": [
+        {
+          "name": "telegramCommunity",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  84,
+                  101,
+                  108,
+                  101,
+                  103,
+                  114,
+                  97,
+                  109
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "communityAccount"
+              }
+            ]
+          }
+        },
+        {
+          "name": "communityAccount"
+        },
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "communityAccount"
+          ]
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "chatId",
+          "type": "i64"
+        }
+      ]
+    },
+    {
+      "name": "mutMemberTelegram",
+      "discriminator": [
+        70,
+        27,
+        225,
+        67,
+        63,
+        135,
+        98,
+        154
+      ],
+      "accounts": [
+        {
+          "name": "telegramMemberInfo",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  77,
+                  101,
+                  109,
+                  98,
+                  101,
+                  114,
+                  84,
+                  101,
+                  108,
+                  101,
+                  103,
+                  114,
+                  97,
+                  109
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "memberInfo"
+              }
+            ]
+          }
+        },
+        {
+          "name": "memberInfo"
+        },
+        {
+          "name": "communityAccount"
+        },
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "communityAccount"
+          ]
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "username",
+          "type": "string"
         }
       ]
     },
@@ -737,6 +952,32 @@ export type Phanuel = {
         3,
         80
       ]
+    },
+    {
+      "name": "telegramCommunity",
+      "discriminator": [
+        110,
+        159,
+        209,
+        162,
+        194,
+        90,
+        234,
+        236
+      ]
+    },
+    {
+      "name": "telegramMemberInfo",
+      "discriminator": [
+        210,
+        191,
+        61,
+        173,
+        212,
+        204,
+        154,
+        27
+      ]
     }
   ],
   "errors": [
@@ -789,6 +1030,11 @@ export type Phanuel = {
       "code": 6009,
       "name": "exceedNumberOfMember",
       "msg": "Exceed Number of Member"
+    },
+    {
+      "code": 6010,
+      "name": "invalidCommunity",
+      "msg": "Invalid Community"
     }
   ],
   "types": [
@@ -907,6 +1153,38 @@ export type Phanuel = {
           },
           {
             "name": "note",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "name": "telegramCommunity",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "community",
+            "type": "pubkey"
+          },
+          {
+            "name": "chatId",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "telegramMemberInfo",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "memberInfo",
+            "type": "pubkey"
+          },
+          {
+            "name": "username",
             "type": "string"
           }
         ]

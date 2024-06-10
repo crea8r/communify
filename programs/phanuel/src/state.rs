@@ -67,3 +67,26 @@ impl Memo {
 }
 
 // need to store member telegram username and community telegram group chat
+#[account]
+#[derive(InitSpace)]
+pub struct TelegramCommunity {
+	pub community: Pubkey,
+	#[max_len(50)]
+	pub chat_id: i64,
+}
+
+impl TelegramCommunity {
+	pub const SEED: &'static [u8] = b"Telegram";
+}
+
+#[account]
+#[derive(InitSpace)]
+pub struct TelegramMemberInfo {
+	pub member_info: Pubkey,
+	#[max_len(50)]
+	pub username: String,
+}
+
+impl TelegramMemberInfo {
+	pub const SEED: &'static [u8] = b"MemberTelegram";
+}

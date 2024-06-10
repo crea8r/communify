@@ -24,15 +24,20 @@ const register = (ctx) => {
     );
     try {
       connection.getAccountInfo(communityAccount).then((accountInfo) => {
-        console.log(accountInfo.data);
-        const info = CommunityAccountSchema.decode(accountInfo.data);
-        return ctx.reply(
-          'You are admin of ' +
-            info.symbol +
-            ', now I will connect that with chatId ' +
-            chatId +
-            '!'
-        );
+        if (accountInfo) {
+          const info = CommunityAccountSchema.decode(accountInfo.data);
+          return ctx.reply(
+            'You are admin of ' +
+              info.symbol +
+              ', now I will connect that with chatId ' +
+              chatId +
+              '!'
+          );
+        } else {
+          return ctx.reply(
+            'You are not admin of any community. Please go to https://communify.com to create one!'
+          );
+        }
       });
     } catch (e) {
       return ctx.reply(

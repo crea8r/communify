@@ -28,6 +28,9 @@ pub mod phanuel {
 	pub fn update(ctx: Context<UpdateCtx>, symbol: String, decay_after: u64) -> Result<()> {
 		run_update(ctx, symbol, decay_after)
 	}
+	pub fn mut_community_telegram(ctx:Context<MutTelegramCtx>, chat_id: i64) -> Result<()>{
+		run_mut_telegram(ctx, chat_id)
+	}
 	// manage community member
 	pub fn add_member(ctx: Context<AddMemberCtx>) -> Result<()> {
 		run_add_member(ctx)
@@ -43,6 +46,15 @@ pub mod phanuel {
 	}
 	pub fn activate_member(ctx: Context<MutMemberCtx>) -> Result<()> {
 		run_activate_member(ctx)
+	}
+	pub fn mut_member_telegram(ctx: Context<MutMemberTelegramCtx>, username: String) -> Result<()> {
+		run_mut_member_telegram(ctx, username)
+	}
+	pub fn add_multiple_member_telegram<'c: 'info, 'info>(ctx: Context<'_, '_, 'c, 'info, MutMultipleMemberTelegramCtx<'info>>, no_of_member: u8, usernames: Vec<String>) -> Result<()> {
+		run_add_multiple_member_telegram(ctx, no_of_member, usernames)
+	}
+	pub fn edit_multiple_member_telegram<'c: 'info, 'info>(ctx: Context<'_, '_, 'c, 'info, MutMultipleMemberTelegramCtx<'info>>, no_of_member: u8, usernames: Vec<String>) -> Result<()> {
+		run_edit_multiple_member_telegram(ctx, no_of_member, usernames)
 	}
 	// mint
 	pub fn mint_to(ctx: Context<MintToCtx>, amount: u64) -> Result<()> {

@@ -150,6 +150,49 @@ describe('phanuel', () => {
       assert.ok(false);
     }
   });
+  it('Link token to telegram chatId', async () => {
+    const chatId = '-1002002393144';
+    const [telegramPDA] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from('Telegram'), TokenPDA.toBuffer()],
+      program.programId
+    );
+    const mutTelegramAccounts = {
+      communityAccount: TokenPDA,
+      admin: admin.publicKey,
+      telegramCommunity: telegramPDA,
+    };
+    await program.methods
+      .mutCommunityTelegram(new anchor.BN(chatId))
+      .accounts(mutTelegramAccounts)
+      .signers([admin])
+      .rpc();
+    try {
+      const telegramInfo = await program.account.telegramCommunity.fetch(
+        telegramPDA
+      );
+      assert.equal(telegramInfo.chatId.toString(), chatId);
+      assert.equal(telegramInfo.community.toBase58(), TokenPDA.toBase58());
+    } catch (e) {
+      console.error('Telegram not linked, error', e);
+      assert.ok(false);
+    }
+    const newChatId = '-1002085007814';
+    await program.methods
+      .mutCommunityTelegram(new anchor.BN(newChatId))
+      .accounts(mutTelegramAccounts)
+      .signers([admin])
+      .rpc();
+    try {
+      const telegramInfo = await program.account.telegramCommunity.fetch(
+        telegramPDA
+      );
+      assert.equal(telegramInfo.chatId.toString(), newChatId);
+      assert.equal(telegramInfo.community.toBase58(), TokenPDA.toBase58());
+    } catch (e) {
+      console.error('Telegram not changed, error', e);
+      assert.ok(false);
+    }
+  });
   it('Add member!', async () => {
     const addMembersAccounts = {
       communityAccount: TokenPDA,
@@ -173,87 +216,131 @@ describe('phanuel', () => {
       assert.ok(false);
     }
   });
-  it('Add multiple members', async () => {
-    // generate randome keypair; MAX=19!
-    const no_member = 100;
-    const keypairs = [];
-    const memberInfoAccounts = [];
-    const memberAccounts = [];
-    const MAX_PER_INS = 18;
-    for (var i = 0; i < no_member; i++) {
-      keypairs.push(Keypair.generate());
-      memberAccounts.push({
-        pubkey: keypairs[i].publicKey,
-        isSigner: false,
-        isWritable: false,
-      });
-      const [memberInfoPDA] = anchor.web3.PublicKey.findProgramAddressSync(
-        [
-          Buffer.from('User'),
-          TokenPDA.toBuffer(),
-          keypairs[i].publicKey.toBuffer(),
-        ],
-        program.programId
-      );
-      memberInfoAccounts.push({
-        pubkey: memberInfoPDA,
-        isSigner: false,
-        isWritable: true,
-      });
-    }
-    const remainingAccounts = [...memberInfoAccounts, ...memberAccounts];
-    const connection = anchor.getProvider().connection;
-    const lookupTableAddress = await initializeLookupTable(
-      admin,
-      connection,
-      remainingAccounts.map((ac) => ac.pubkey)
+  it('Upsert member w1 Telegram', async () => {
+    const [telegramPDA] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from('MemberTelegram'), w1PDA.toBuffer()],
+      program.programId
     );
-    await waitForNewBlock(connection, 1);
-    const lookupTableAccounts = (
-      await connection.getAddressLookupTable(lookupTableAddress)
-    ).value;
-    if (!lookupTableAccounts) {
-      throw new Error('Lookup table accounts not found');
-    }
-    const multipleAddMembersAccounts = {
+    const username = 'hieubt88';
+    const mutTelegramAccounts = {
       communityAccount: TokenPDA,
       admin: admin.publicKey,
-      phanuelProgram: program.programId,
-      systemProgram: anchor.web3.SystemProgram.programId,
+      telegramMemberInfo: telegramPDA,
+      memberInfo: w1PDA,
     };
-    // split const memberInfoAccounts, BagAccounts into group of MAX_PER_INS
-    for (var i = 0; i < Math.ceil(no_member / MAX_PER_INS); i++) {
-      const start = i * MAX_PER_INS;
-      const end =
-        start + MAX_PER_INS > no_member ? no_member : start + MAX_PER_INS;
-      const memberSlice = memberAccounts.slice(start, end);
-      const memberInfoSlice = memberInfoAccounts.slice(start, end);
-      const remainingAccountsSlice = [...memberSlice, ...memberInfoSlice];
-      const addMemberIns = await program.methods
-        .addMultipleMember(memberSlice.length)
-        .accounts(multipleAddMembersAccounts)
-        .remainingAccounts(remainingAccountsSlice)
-        .instruction();
-      await sendV0Transaction(
-        connection,
-        admin,
-        [addMemberIns],
-        [lookupTableAccounts]
-      );
-    }
-    // TODO: deactive and close
-    let idx = 0;
+    await program.methods
+      .mutMemberTelegram(username)
+      .accounts(mutTelegramAccounts)
+      .signers([admin])
+      .rpc();
     try {
-      for (var i = 0; i < memberAccounts.length; i++) {
-        const memberInfo = await program.account.memberInfo.fetch(
-          memberInfoAccounts[i].pubkey
-        );
-        idx = i;
-      }
-    } catch (e: any) {
-      assert.ok(false, 'Cannot find member at ' + idx);
+      const telegramInfo = await program.account.telegramMemberInfo.fetch(
+        telegramPDA
+      );
+      assert.equal(telegramInfo.username, username);
+      assert.equal(telegramInfo.memberInfo.toBase58(), w1PDA.toBase58());
+    } catch (e) {
+      console.error('Member Telegram not linked, error', e);
+      assert.ok(false);
+    }
+    const newUsername = 'newUserName';
+    await program.methods
+      .mutMemberTelegram(newUsername)
+      .accounts(mutTelegramAccounts)
+      .signers([admin])
+      .rpc();
+    try {
+      const telegramInfo = await program.account.telegramMemberInfo.fetch(
+        telegramPDA
+      );
+      assert.equal(telegramInfo.username, newUsername);
+      assert.equal(telegramInfo.memberInfo.toBase58(), w1PDA.toBase58());
+    } catch (e) {
+      console.error('Member Telegram not changed, error', e);
+      assert.ok(false);
     }
   });
+  // it('Add multiple members', async () => {
+  //   // generate randome keypair; MAX=19!
+  //   const no_member = 100;
+  //   const keypairs = [];
+  //   const memberInfoAccounts = [];
+  //   const memberAccounts = [];
+  //   const MAX_PER_INS = 18;
+  //   for (var i = 0; i < no_member; i++) {
+  //     keypairs.push(Keypair.generate());
+  //     memberAccounts.push({
+  //       pubkey: keypairs[i].publicKey,
+  //       isSigner: false,
+  //       isWritable: false,
+  //     });
+  //     const [memberInfoPDA] = anchor.web3.PublicKey.findProgramAddressSync(
+  //       [
+  //         Buffer.from('User'),
+  //         TokenPDA.toBuffer(),
+  //         keypairs[i].publicKey.toBuffer(),
+  //       ],
+  //       program.programId
+  //     );
+  //     memberInfoAccounts.push({
+  //       pubkey: memberInfoPDA,
+  //       isSigner: false,
+  //       isWritable: true,
+  //     });
+  //   }
+  //   const remainingAccounts = [...memberInfoAccounts, ...memberAccounts];
+  //   const connection = anchor.getProvider().connection;
+  //   const lookupTableAddress = await initializeLookupTable(
+  //     admin,
+  //     connection,
+  //     remainingAccounts.map((ac) => ac.pubkey)
+  //   );
+  //   await waitForNewBlock(connection, 1);
+  //   const lookupTableAccounts = (
+  //     await connection.getAddressLookupTable(lookupTableAddress)
+  //   ).value;
+  //   if (!lookupTableAccounts) {
+  //     throw new Error('Lookup table accounts not found');
+  //   }
+  //   const multipleAddMembersAccounts = {
+  //     communityAccount: TokenPDA,
+  //     admin: admin.publicKey,
+  //     phanuelProgram: program.programId,
+  //     systemProgram: anchor.web3.SystemProgram.programId,
+  //   };
+  //   // split const memberInfoAccounts, BagAccounts into group of MAX_PER_INS
+  //   for (var i = 0; i < Math.ceil(no_member / MAX_PER_INS); i++) {
+  //     const start = i * MAX_PER_INS;
+  //     const end =
+  //       start + MAX_PER_INS > no_member ? no_member : start + MAX_PER_INS;
+  //     const memberSlice = memberAccounts.slice(start, end);
+  //     const memberInfoSlice = memberInfoAccounts.slice(start, end);
+  //     const remainingAccountsSlice = [...memberSlice, ...memberInfoSlice];
+  //     const addMemberIns = await program.methods
+  //       .addMultipleMember(memberSlice.length)
+  //       .accounts(multipleAddMembersAccounts)
+  //       .remainingAccounts(remainingAccountsSlice)
+  //       .instruction();
+  //     await sendV0Transaction(
+  //       connection,
+  //       admin,
+  //       [addMemberIns],
+  //       [lookupTableAccounts]
+  //     );
+  //   }
+  //   // TODO: deactive and close
+  //   let idx = 0;
+  //   try {
+  //     for (var i = 0; i < memberAccounts.length; i++) {
+  //       const memberInfo = await program.account.memberInfo.fetch(
+  //         memberInfoAccounts[i].pubkey
+  //       );
+  //       idx = i;
+  //     }
+  //   } catch (e: any) {
+  //     assert.ok(false, 'Cannot find member at ' + idx);
+  //   }
+  // });
   it('Disable & Remove member', async () => {
     const addMembersAccounts = {
       communityAccount: TokenPDA,

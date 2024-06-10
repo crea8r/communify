@@ -150,6 +150,48 @@
       ]
     },
     {
+      "name": "add_multiple_member_telegram",
+      "discriminator": [
+        39,
+        89,
+        22,
+        204,
+        222,
+        29,
+        16,
+        255
+      ],
+      "accounts": [
+        {
+          "name": "community_account"
+        },
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "community_account"
+          ]
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "no_of_member",
+          "type": "u8"
+        },
+        {
+          "name": "usernames",
+          "type": {
+            "vec": "string"
+          }
+        }
+      ]
+    },
+    {
       "name": "change_admin_and_fee",
       "discriminator": [
         23,
@@ -289,6 +331,48 @@
         }
       ],
       "args": []
+    },
+    {
+      "name": "edit_multiple_member_telegram",
+      "discriminator": [
+        119,
+        151,
+        122,
+        180,
+        172,
+        140,
+        19,
+        147
+      ],
+      "accounts": [
+        {
+          "name": "community_account"
+        },
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "community_account"
+          ]
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "no_of_member",
+          "type": "u8"
+        },
+        {
+          "name": "usernames",
+          "type": {
+            "vec": "string"
+          }
+        }
+      ]
     },
     {
       "name": "initialize",
@@ -472,6 +556,137 @@
         {
           "name": "amount",
           "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "mut_community_telegram",
+      "discriminator": [
+        142,
+        248,
+        144,
+        128,
+        60,
+        179,
+        78,
+        248
+      ],
+      "accounts": [
+        {
+          "name": "telegram_community",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  84,
+                  101,
+                  108,
+                  101,
+                  103,
+                  114,
+                  97,
+                  109
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "community_account"
+              }
+            ]
+          }
+        },
+        {
+          "name": "community_account"
+        },
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "community_account"
+          ]
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "chat_id",
+          "type": "i64"
+        }
+      ]
+    },
+    {
+      "name": "mut_member_telegram",
+      "discriminator": [
+        70,
+        27,
+        225,
+        67,
+        63,
+        135,
+        98,
+        154
+      ],
+      "accounts": [
+        {
+          "name": "telegram_member_info",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  77,
+                  101,
+                  109,
+                  98,
+                  101,
+                  114,
+                  84,
+                  101,
+                  108,
+                  101,
+                  103,
+                  114,
+                  97,
+                  109
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "member_info"
+              }
+            ]
+          }
+        },
+        {
+          "name": "member_info"
+        },
+        {
+          "name": "community_account"
+        },
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "community_account"
+          ]
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "username",
+          "type": "string"
         }
       ]
     },
@@ -731,6 +946,32 @@
         3,
         80
       ]
+    },
+    {
+      "name": "TelegramCommunity",
+      "discriminator": [
+        110,
+        159,
+        209,
+        162,
+        194,
+        90,
+        234,
+        236
+      ]
+    },
+    {
+      "name": "TelegramMemberInfo",
+      "discriminator": [
+        210,
+        191,
+        61,
+        173,
+        212,
+        204,
+        154,
+        27
+      ]
     }
   ],
   "errors": [
@@ -783,6 +1024,11 @@
       "code": 6009,
       "name": "ExceedNumberOfMember",
       "msg": "Exceed Number of Member"
+    },
+    {
+      "code": 6010,
+      "name": "InvalidCommunity",
+      "msg": "Invalid Community"
     }
   ],
   "types": [
@@ -901,6 +1147,38 @@
           },
           {
             "name": "note",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "name": "TelegramCommunity",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "community",
+            "type": "pubkey"
+          },
+          {
+            "name": "chat_id",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "TelegramMemberInfo",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "member_info",
+            "type": "pubkey"
+          },
+          {
+            "name": "username",
             "type": "string"
           }
         ]

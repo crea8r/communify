@@ -22,4 +22,6 @@ pub enum ErrorCode {
 	pub InvalidBagPDA,
 	#[msg("Exceed Number of Member")]
 	pub ExceedNumberOfMember,
+	#[msg("Invalid Community")]
+	pub InvalidCommunity,
 }

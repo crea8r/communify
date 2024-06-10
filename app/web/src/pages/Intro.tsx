@@ -1,6 +1,16 @@
+import { useState } from 'react';
+import ModalVideo from 'react-modal-video';
 const Intro = () => {
+  const [isOpen, setOpen] = useState(true);
   return (
     <div className='p-4 bg-white rounded-lg'>
+      <ModalVideo
+        channel='youtube'
+        youtube={{ mute: 0, autoplay: 0 }}
+        isOpen={isOpen}
+        videoId='_AM7KFqM9XY'
+        onClose={() => setOpen(false)}
+      />
       <p className='font-bold'>Intro</p>
       <div className='my-2'>
         <p>A token represent the bloodline of the community.</p>
