@@ -80,13 +80,19 @@ const fetchAllBag = async (connection, communityAccount, memberAccount) => {
 
 // username: telegram username, chatId: telegram group chat id
 const viewBalance = async (memberPublicKey, chatId) => {
+  console.log(
+    'viewBalance, memberPublicKey: ',
+    memberPublicKey,
+    ', chatId: ',
+    chatId
+  );
   const connection = getConnection();
   if (!connection) {
-    return ctx.reply('Something went wrong, contact support!');
+    return 'Something went wrong, contact support!';
   }
   const communityPublicKey = await fetchCommunityPublicKey(connection, chatId);
   if (!communityPublicKey) {
-    return ctx.reply('Community not found!');
+    return 'Community not found!';
   }
   const communityAccountInfo = await connection.getAccountInfo(
     communityPublicKey
