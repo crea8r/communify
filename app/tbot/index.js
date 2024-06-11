@@ -12,6 +12,7 @@ const commandDisconnect = require('./commands/disconnect');
 const commandConnect = require('./commands/connect');
 const commandStart = require('./commands/start');
 const commandTip = require('./commands/tip');
+const commandBalance = require('./commands/balance');
 // -- admin command
 const commandRegister = require('./commands/register');
 
@@ -27,6 +28,7 @@ bot.start(commandStart);
 bot.command('disconnect', commandDisconnect);
 bot.command('connect', commandConnect);
 bot.command('tip', commandTip);
+bot.command('balance', commandBalance);
 bot.command('register', commandRegister);
 bot.help(commandHelp);
 

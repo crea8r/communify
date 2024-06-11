@@ -17,7 +17,8 @@
   "dependencies": {
     "@coral-xyz/anchor": "^0.30.0",
     "@coral-xyz/borsh": "^0.30.0",
-    "@solana/web3.js": "^1.92.2",
+    "@solana/codecs-numbers": "^2.0.0-experimental.5e8ac8d",
+    "@solana/web3.js": "^1.92.3",
     "bs58": "^5.0.0",
     "buffer": "^6.0.3",
     "dotenv": "^16.4.5",
