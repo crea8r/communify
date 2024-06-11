@@ -46,7 +46,7 @@ const AllMembers = () => {
     if (members.length > 0) {
       fetchUsernames();
     }
-  }, [offset, members, rCount]);
+  }, [offset, members, search, rCount]);
   return (
     <Card>
       <CardHeader>

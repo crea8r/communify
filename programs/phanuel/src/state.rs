@@ -71,7 +71,6 @@ impl Memo {
 #[derive(InitSpace)]
 pub struct TelegramCommunity {
 	pub community: Pubkey,
-	#[max_len(50)]
 	pub chat_id: i64,
 }
 

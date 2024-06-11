@@ -3,6 +3,7 @@ const viewBalance = require('../services/viewBalance');
 
 const balance = async (ctx) => {
   const sessions = getSessions();
+  const username = ctx.update.message.from.username;
   if (
     sessions[username] &&
     sessions[username].session &&
