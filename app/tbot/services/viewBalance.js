@@ -5,10 +5,10 @@ const { BagSchema, CommunityAccountSchema } = require('../services/_scheme');
 const bs58 = require('bs58');
 const constants = require('../constants');
 const { getConnection } = require('../state/connection');
+const anchor = require('@coral-xyz/anchor');
 
 const fetchCommunityPublicKey = async (connection, chatId) => {
   try {
-    const bnChatId = new anchor.BN(chatId);
     const encoder = getI64Encoder();
     const telegramCommunity = await connection.getProgramAccounts(
       constants.programId,
@@ -101,7 +101,7 @@ const viewBalance = async (memberPublicKey, chatId) => {
   const bags = await fetchAllBag(
     connection,
     communityPublicKey,
-    memberPublicKey
+    new anchor.web3.PublicKey(memberPublicKey)
   );
   let _total = 0;
   bags.map((bag) => {
