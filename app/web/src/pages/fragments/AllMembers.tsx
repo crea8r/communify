@@ -71,6 +71,7 @@ const AllMembers = () => {
                   setFilteredMembers(filtered);
                 }
                 setSearch(e.target.value);
+                setOffset(0);
               }}
             />
             <>
@@ -158,19 +159,16 @@ const AllMembers = () => {
                   const memberInfoPDAs = [];
                   const changedUsernames = [];
                   for (var i = 0; i < originalUsernames.length; i++) {
+                    // console.log('i + offset : ', i + offset);
                     if (originalUsernames[i] !== usernames[i]) {
                       memberInfoPDAs.push(
-                        filteredMembers[i + offset + offset * size].publicKey
+                        filteredMembers[i + offset].publicKey
                       );
                       changedUsernames.push(usernames[i]);
                     }
                   }
-                  console.log(
-                    'memberInfoPDAs: ',
-                    memberInfoPDAs,
-                    '; changedUsernames: ',
-                    changedUsernames
-                  );
+                  setSearch('');
+                  setOffset(0);
                   changeMembersTelegram({
                     memberInfos: memberInfoPDAs,
                     admin: wallet,
