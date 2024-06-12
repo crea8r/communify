@@ -2,7 +2,6 @@ const { Telegraf } = require('telegraf');
 const web3 = require('@solana/web3.js');
 const express = require('express');
 const path = require('path');
-const createTransferTxn = require('./services/createTransferTxn');
 const constants = require('./constants');
 require('dotenv').config();
 
@@ -31,6 +30,10 @@ bot.command('tip', commandTip);
 bot.command('balance', commandBalance);
 bot.command('register', commandRegister);
 bot.help(commandHelp);
+
+// for development & testing
+const testCommand = require('./commands/test');
+bot.command('test', testCommand);
 
 bot.launch();
 

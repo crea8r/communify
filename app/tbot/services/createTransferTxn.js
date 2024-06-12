@@ -1,8 +1,5 @@
 const anchor = require('@coral-xyz/anchor');
 const borsh = require('@coral-xyz/borsh');
-const programId = new anchor.web3.PublicKey(
-  'Pha5A3BB4xKRZDs8ycvukFUagaKvk3AQBaH3J5qwAok'
-);
 const CLOCK_LAYOUT = borsh.struct([
   borsh.u64('slot'),
   borsh.u64('epoch_start_timestamp'),
@@ -10,7 +7,18 @@ const CLOCK_LAYOUT = borsh.struct([
   borsh.u64('leader_schedule_epoch'),
   borsh.u64('unix_timestamp'),
 ]);
-const createTransferTxn = async ({ connection, sender, receiver, amount }) => {
+const { getConnection } = require('../state/connection');
+
+const createTransferTxn = async ({
+  senderAddress,
+  communityChatId,
+  receiverUsername,
+  amount,
+}) => {
+  const connection = getConnection();
+  if (!connection) {
+    return 'Something went wrong, contact support!';
+  }
   const clockInfo = await connection.getAccountInfo(
     anchor.web3.SYSVAR_CLOCK_PUBKEY
   );
@@ -19,5 +27,12 @@ const createTransferTxn = async ({ connection, sender, receiver, amount }) => {
     const clockData = CLOCK_LAYOUT.decode(clockInfo.data);
     currentUnixTimestamp = clockData.unix_timestamp.toNumber();
   }
+  // what is recevier address from the username?
+  // what is recevier's memberInfo PDA?
+  // what bags are available for the sender? and amount of each bags
+  // create receiver bag PDA
+  // create memo PDA
+  // create transferAccounts: sender, member, receiverInfo, bag, communityAccount, program, clock, senderInfo, memo
+  // construct the remainingAccounts
 };
 module.exports = createTransferTxn;

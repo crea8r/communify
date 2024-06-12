@@ -647,12 +647,6 @@ export type Phanuel = {
               {
                 "kind": "const",
                 "value": [
-                  77,
-                  101,
-                  109,
-                  98,
-                  101,
-                  114,
                   84,
                   101,
                   108,
@@ -660,7 +654,17 @@ export type Phanuel = {
                   103,
                   114,
                   97,
-                  109
+                  109,
+                  77,
+                  101,
+                  109,
+                  98,
+                  101,
+                  114,
+                  73,
+                  110,
+                  102,
+                  111
                 ]
               },
               {
@@ -1181,6 +1185,10 @@ export type Phanuel = {
         "fields": [
           {
             "name": "memberInfo",
+            "type": "pubkey"
+          },
+          {
+            "name": "community",
             "type": "pubkey"
           },
           {

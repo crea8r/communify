@@ -13,8 +13,6 @@ const processText = (message) => {
 };
 
 const tip = (ctx) => {
-  console.log('*** before checking ctx, payload: ', ctx.payload);
-  console.log('*');
   const sessions = getSessions();
   const username = ctx.update.message.from.username;
   const payload = ctx.payload;

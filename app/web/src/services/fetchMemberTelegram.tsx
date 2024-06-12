@@ -5,7 +5,7 @@ import { getProgram } from '../funcs/config';
 const fetchMemberTelegram = async (memberInfoPDA: PublicKey) => {
   const program = getProgram();
   const [memberTelegram] = await anchor.web3.PublicKey.findProgramAddressSync(
-    [Buffer.from('MemberTelegram'), memberInfoPDA.toBuffer()],
+    [Buffer.from('TelegramMemberInfo'), memberInfoPDA.toBuffer()],
     program.programId
   );
   try {

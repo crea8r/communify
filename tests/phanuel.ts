@@ -218,7 +218,7 @@ describe('phanuel', () => {
   });
   it('Upsert member w1 Telegram', async () => {
     const [telegramPDA] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from('MemberTelegram'), w1PDA.toBuffer()],
+      [Buffer.from('TelegramMemberInfo'), w1PDA.toBuffer()],
       program.programId
     );
     const username = 'hieubt88';

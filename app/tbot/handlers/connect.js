@@ -5,7 +5,6 @@ const nacl = require('tweetnacl');
 const constants = require('../constants');
 
 const connect = (req, res) => {
-  console.log(req.query);
   const sessions = getSessions();
   const phantom_encryption_public_key = req.query.phantom_encryption_public_key;
   const nonce = req.query.nonce;

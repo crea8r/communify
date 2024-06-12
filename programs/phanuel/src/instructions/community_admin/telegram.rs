@@ -42,6 +42,7 @@ pub fn run_mut_member_telegram(ctx: Context<MutMemberTelegramCtx>, username: Str
   }
   let telegram_member_info = &mut ctx.accounts.telegram_member_info;
   telegram_member_info.member_info = ctx.accounts.member_info.key();
+  telegram_member_info.community = ctx.accounts.community_account.key();
   telegram_member_info.username = username;
   Ok(())
 }

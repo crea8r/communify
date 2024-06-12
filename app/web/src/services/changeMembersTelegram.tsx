@@ -24,7 +24,7 @@ const changeMembersTelegram = async ({
     const memberInfoPDA = memberInfos[i];
     const username = usernames[i];
     const [telegramMemberInfo] = anchor.web3.PublicKey.findProgramAddressSync(
-      [Buffer.from('MemberTelegram'), memberInfoPDA.toBuffer()],
+      [Buffer.from('TelegramMemberInfo'), memberInfoPDA.toBuffer()],
       program.programId
     );
     const [communityAccount] = anchor.web3.PublicKey.findProgramAddressSync(

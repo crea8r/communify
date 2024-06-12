@@ -82,10 +82,11 @@ impl TelegramCommunity {
 #[derive(InitSpace)]
 pub struct TelegramMemberInfo {
 	pub member_info: Pubkey,
+	pub community: Pubkey,
 	#[max_len(50)]
 	pub username: String,
 }
 
 impl TelegramMemberInfo {
-	pub const SEED: &'static [u8] = b"MemberTelegram";
+	pub const SEED: &'static [u8] = b"TelegramMemberInfo";
 }
