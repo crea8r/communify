@@ -28,9 +28,9 @@ const test = async (ctx) => {
   // const message = '@HeyCap 1 thank you for amazing pitch deck comment';
   console.log('* test: ', ctx.payload);
   if (
-    !sessions[username] ||
-    !sessions[username].publicKey ||
-    !sessions[username].session
+    sessions[username] &&
+    sessions[username].session &&
+    sessions[username].publicKey
   ) {
     const session = sessions[username].session;
     const sharedSecret = sessions[username].sharedSecret;
