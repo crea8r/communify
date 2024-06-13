@@ -68,7 +68,7 @@ const test = async (ctx) => {
         'http://t.me/' +
           constants.botName +
           '/start=' +
-          bs58.encode(message).toString()
+          bs58.encode(Buffer.from(message))
       ),
       payload: bs58.encode(encryptedPayload),
     });

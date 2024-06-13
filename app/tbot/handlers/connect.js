@@ -25,7 +25,7 @@ const connect = (req, res) => {
   sessions[username].sharedSecret = sharedSecretDapp;
   //TODO: publicKey is the user address, should changed to userAddress in the next refactor
   sessions[username].publicKey = connectData.public_key;
-  const msg = base58.encode(sessions[username].publicKey);
+  const msg = base58.encode(Buffer.from(sessions[username].publicKey));
 
   // should go back where he came from!
   return res.render('connect', {
