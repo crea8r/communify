@@ -5,7 +5,7 @@ const start = (ctx) => {
   if (ctx.payload) {
     try {
       const message = ctx.payload;
-      return ctx.reply(base58.decode(message));
+      return ctx.reply(base58.decode(message).toString());
     } catch (e) {}
   }
   const username = ctx.update.message.from.username;
