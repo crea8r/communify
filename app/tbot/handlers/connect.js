@@ -29,7 +29,7 @@ const connect = (req, res) => {
 
   // should go back where he came from!
   return res.render('connect', {
-    url: 'https://t.me/' + constants.botName + '?start=' + msg,
+    url: 'https://t.me/' + constants.botName + '?start=' + msg.toString(),
   });
 };
 
