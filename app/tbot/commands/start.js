@@ -1,11 +1,11 @@
 const { getSessions } = require('../state/sessions');
+const base58 = require('bs58');
 
 const start = (ctx) => {
-  console.log('start payload:', ctx.payload);
   if (ctx.payload) {
     try {
-      const address = ctx.payload;
-      return ctx.reply('Welcome ' + address);
+      const message = ctx.payload;
+      return ctx.reply(base58.decode(message));
     } catch (e) {}
   }
   const username = ctx.update.message.from.username;

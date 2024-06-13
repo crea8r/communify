@@ -58,13 +58,15 @@ const test = async (ctx) => {
       session,
       transaction: bs58.encode(serializedTransaction),
     };
-    console.log('encoded: ', bs58.encode(serializedTransaction));
     const [nonce, encryptedPayload] = encryptPayload(payload, sharedSecret);
+    const message = 'Hey, @' + username + ', ' + intent.amount + ' token sent';
     const params = new URLSearchParams({
       dapp_encryption_public_key: bs58.encode(dappKeyPair.publicKey),
       nonce: bs58.encode(nonce),
       // TODO: redirect to a /handler where we trigger a success message
-      redirect_link: encodeURI('http://t.me/' + constants.botName),
+      redirect_link: encodeURI(
+        'http://t.me/' + constants.botName + '/start=' + bs58.encode(message)
+      ),
       payload: bs58.encode(encryptedPayload),
     });
     const url = buildUrl('signAndSendTransaction', params);

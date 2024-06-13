@@ -3,6 +3,7 @@ const { getSessions } = require('../state/sessions');
 const bs58 = require('bs58');
 const nacl = require('tweetnacl');
 const constants = require('../constants');
+const base58 = require('bs58');
 
 const connect = (req, res) => {
   const sessions = getSessions();
@@ -24,14 +25,11 @@ const connect = (req, res) => {
   sessions[username].sharedSecret = sharedSecretDapp;
   //TODO: publicKey is the user address, should changed to userAddress in the next refactor
   sessions[username].publicKey = connectData.public_key;
+  const msg = base58.encode(sessions[username].publicKey);
 
   // should go back where he came from!
   return res.render('connect', {
-    url:
-      'https://t.me/' +
-      constants.botName +
-      '?start=' +
-      sessions[username].publicKey,
+    url: 'https://t.me/' + constants.botName + '?start=' + msg,
   });
 };
 
