@@ -20,6 +20,9 @@ const buildUrl = (path, params) =>
 const test = async (ctx) => {
   const sessions = getSessions();
   const username = ctx.update.message.from.username;
+  console.log('sessions: ', sessions);
+  console.log('username: ', username);
+  console.log(sessions[username]);
   // const publicKey = 'CCoSKkgPWC1CSBki4LM9cCp9hM9zURQyfgY6h3UtNitR';
   // const chatId = '-1002002393144';
   // const message = '@HeyCap 1 thank you for amazing pitch deck comment';
