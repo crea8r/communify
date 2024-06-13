@@ -35,6 +35,7 @@ const test = async (ctx) => {
     const session = sessions[username].session;
     const sharedSecret = sessions[username].sharedSecret;
     const userPublicKey = sessions[username].publicKey;
+    const dappKeyPair = sessions[username].kp;
 
     const chatId = ctx.update.message.chat.id;
 
