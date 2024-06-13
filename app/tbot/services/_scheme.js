@@ -17,7 +17,12 @@ const TelegramCommunitySchema = borsh.struct([
   borsh.publicKey('community'),
   borsh.i64('chat_id'),
 ]);
-
+const TelegramMemberInfoSchema = borsh.struct([
+  borsh.u64('discriminator'),
+  borsh.publicKey('memberInfo'),
+  borsh.publicKey('community'),
+  borsh.str('username'),
+]);
 const BagSchema = borsh.struct([
   borsh.u64('discriminator'),
   borsh.publicKey('community'),
@@ -26,10 +31,19 @@ const BagSchema = borsh.struct([
   borsh.u64('decay_at'),
   borsh.u64('created_at'),
 ]);
+const MemberInfoSchema = borsh.struct([
+  borsh.u64('discriminator'),
+  borsh.publicKey('community'),
+  borsh.publicKey('member'),
+  borsh.u64('max'),
+  borsh.u8('status'),
+]);
 
 module.exports = {
   CommunityAccountSchema,
   CLOCK_LAYOUT,
   TelegramCommunitySchema,
   BagSchema,
+  TelegramMemberInfoSchema,
+  MemberInfoSchema,
 };

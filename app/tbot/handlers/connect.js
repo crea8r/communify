@@ -21,7 +21,10 @@ const connect = (req, res) => {
   );
   const connectData = decryptPayload(data, nonce, sharedSecretDapp);
   sessions[username].session = connectData.session;
+  sessions[username].sharedSecret = sharedSecretDapp;
+  //TODO: publicKey is the user address, should changed to userAddress in the next refactor
   sessions[username].publicKey = connectData.public_key;
+
   // should go back where he came from!
   return res.render('connect', {
     url:

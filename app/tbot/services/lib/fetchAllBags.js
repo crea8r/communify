@@ -2,6 +2,7 @@ const bs58 = require('bs58');
 const idl = require('../../idl.json');
 const { BagSchema } = require('../_scheme');
 const constants = require('../../constants');
+const { publicKey } = require('@coral-xyz/borsh');
 
 const fetchAllBags = async (connection, communityAccount, memberAccount) => {
   try {
@@ -30,7 +31,9 @@ const fetchAllBags = async (connection, communityAccount, memberAccount) => {
         },
       ],
     });
-    return bags.map((bag) => BagSchema.decode(bag.account.data));
+    return bags.map((bag) => {
+      return { ...BagSchema.decode(bag.account.data), publicKey: bag.pubkey };
+    });
   } catch (error) {
     console.log(error);
     return false;
