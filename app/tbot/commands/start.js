@@ -1,10 +1,11 @@
 const { getSessions } = require('../state/sessions');
-const base58 = require('bs58');
 
 const start = (ctx) => {
+  console.log('start ctx: ', ctx);
   if (ctx.payload) {
     try {
       const message = ctx.payload;
+      console.log('payload: ', message);
       return ctx.reply(message);
     } catch (e) {}
   }
