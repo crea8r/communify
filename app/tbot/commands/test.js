@@ -65,10 +65,7 @@ const test = async (ctx) => {
       nonce: bs58.encode(nonce),
       // TODO: redirect to a /handler where we trigger a success message
       redirect_link: encodeURI(
-        'http://t.me/' +
-          constants.botName +
-          '/start=' +
-          bs58.encode(Buffer.from(message))
+        'http://t.me/' + constants.botName + '/start=' + message
       ),
       payload: bs58.encode(encryptedPayload),
     });
