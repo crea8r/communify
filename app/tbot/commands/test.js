@@ -23,6 +23,7 @@ const test = async (ctx) => {
   // const publicKey = 'CCoSKkgPWC1CSBki4LM9cCp9hM9zURQyfgY6h3UtNitR';
   // const chatId = '-1002002393144';
   // const message = '@HeyCap 1 thank you for amazing pitch deck comment';
+  console.log('* test: ', ctx.payload);
   if (
     !sessions[username] ||
     !sessions[username].publicKey ||
@@ -34,7 +35,11 @@ const test = async (ctx) => {
 
     const chatId = ctx.update.message.chat.id;
 
+    console.log('* test: chatId', chatId);
+
     const intent = processText(ctx.payload);
+
+    console.log('* test: intent', intent);
     const txn = await createTransferTxn({
       senderAddress: userPublicKey,
       communityChatId: chatId,
@@ -49,6 +54,7 @@ const test = async (ctx) => {
       session,
       transaction: bs58.encode(serializedTransaction),
     };
+    console.log('encoded: ', bs58.encode(serializedTransaction));
     const [nonce, encryptedPayload] = encryptPayload(payload, sharedSecret);
     const params = new URLSearchParams({
       dapp_encryption_public_key: bs58.encode(dappKeyPair.publicKey),
@@ -58,9 +64,14 @@ const test = async (ctx) => {
       payload: bs58.encode(encryptedPayload),
     });
     const url = buildUrl('signAndSendTransaction', params);
+    console.log('url: ', url);
     return ctx.reply(
       'Click the button below to open Phantom Wallet and approve the tip: ',
       Markup.inlineKeyboard([Markup.button.url('Approve the tip', url)])
+    );
+  } else {
+    return ctx.reply(
+      'You are not connected yet, use /connect to connect to Phantom Wallet'
     );
   }
 };
