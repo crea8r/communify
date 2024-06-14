@@ -51,6 +51,7 @@ const tip = async (ctx) => {
       amount: intent.amount,
       note: intent.message,
     });
+    console.log('txn: ', txn);
     const serializedTransaction = txn.serialize({
       requireAllSignatures: false,
     });
