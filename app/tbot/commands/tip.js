@@ -17,16 +17,9 @@ const processText = (message) => {
 const buildUrl = (path, params) =>
   `https://phantom.app/ul/v1/${path}?${params.toString()}`;
 
-const tip = async (ctx) => {
+const tip = async (ctx, bot) => {
   const sessions = getSessions();
   const username = ctx.update.message.from.username;
-  console.log('sessions: ', sessions);
-  console.log('username: ', username);
-  console.log(sessions[username]);
-  // const publicKey = 'CCoSKkgPWC1CSBki4LM9cCp9hM9zURQyfgY6h3UtNitR';
-  // const chatId = '-1002002393144';
-  // const message = '@HeyCap 1 thank you for amazing pitch deck comment';
-  console.log('* test: ', ctx.payload);
   if (
     sessions[username] &&
     sessions[username].session &&
@@ -39,11 +32,8 @@ const tip = async (ctx) => {
 
     const chatId = ctx.update.message.chat.id;
 
-    console.log('* test: chatId', chatId);
-
     const intent = processText(ctx.payload);
 
-    console.log('* test: intent', intent);
     const txn = await createTransferTxn({
       senderAddress: userPublicKey,
       communityChatId: chatId,
@@ -51,7 +41,6 @@ const tip = async (ctx) => {
       amount: intent.amount,
       note: intent.message,
     });
-    console.log('txn: ', txn);
     if (!txn.serialize) {
       return ctx.reply(txn);
     }
@@ -76,7 +65,7 @@ const tip = async (ctx) => {
       payload: bs58.encode(encryptedPayload),
     });
     const url = buildUrl('signAndSendTransaction', params);
-    console.log('url: ', url);
+    bot.sendMessage(constants.botName);
     return ctx.reply(
       'Click the button below to open Phantom Wallet and approve the tip: ',
       Markup.inlineKeyboard([Markup.button.url('Approve the tip', url)])

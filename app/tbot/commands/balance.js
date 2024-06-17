@@ -11,7 +11,9 @@ const balance = async (ctx) => {
   ) {
     const publicKey = sessions[username].publicKey;
     const chatId = ctx.update.message.chat.id;
-    return ctx.reply(await viewBalance(publicKey, chatId));
+    return ctx.reply(
+      '@' + username + ' balance is ' + (await viewBalance(publicKey, chatId))
+    );
   }
   return ctx.reply('Please /connect first!');
 };

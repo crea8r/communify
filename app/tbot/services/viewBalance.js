@@ -32,7 +32,7 @@ const viewBalance = async (memberPublicKey, chatId) => {
       _total += bag.amount.toNumber();
     }
   });
-  return 'Total: ' + _total + ' ' + info.symbol;
+  return _total + ' ' + info.symbol;
 };
 
 module.exports = viewBalance;

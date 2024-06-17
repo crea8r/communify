@@ -26,10 +26,15 @@ const bot = new Telegraf(process.env.BOT_TOKEN);
 bot.start(commandStart);
 bot.command('disconnect', commandDisconnect);
 bot.command('connect', commandConnect);
-bot.command('tip', commandTip);
+bot.command('tip', (ctx) => {
+  commandTip(ctx, bot);
+});
 bot.command('balance', commandBalance);
 bot.command('register', commandRegister);
 bot.help(commandHelp);
+bot.on('callback_query', (query) => {
+  console.log('is it printing in server? query: ', query);
+});
 
 // for development & testing
 const testCommand = require('./commands/test');
