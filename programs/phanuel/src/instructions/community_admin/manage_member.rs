@@ -63,7 +63,7 @@ pub fn run_disable_member(ctx: Context<MutMemberCtx>) -> Result<()> {
   Ok(())
 }
 pub fn run_activate_member(ctx: Context<MutMemberCtx>) -> Result<()> {
-  ctx.accounts.member_info.status = MEMBER_ACTIVE;
+	ctx.accounts.member_info.status = MEMBER_ACTIVE;
   Ok(())
 }
 

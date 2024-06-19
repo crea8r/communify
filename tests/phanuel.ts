@@ -260,87 +260,87 @@ describe('phanuel', () => {
       assert.ok(false);
     }
   });
-  // it('Add multiple members', async () => {
-  //   // generate randome keypair; MAX=19!
-  //   const no_member = 100;
-  //   const keypairs = [];
-  //   const memberInfoAccounts = [];
-  //   const memberAccounts = [];
-  //   const MAX_PER_INS = 18;
-  //   for (var i = 0; i < no_member; i++) {
-  //     keypairs.push(Keypair.generate());
-  //     memberAccounts.push({
-  //       pubkey: keypairs[i].publicKey,
-  //       isSigner: false,
-  //       isWritable: false,
-  //     });
-  //     const [memberInfoPDA] = anchor.web3.PublicKey.findProgramAddressSync(
-  //       [
-  //         Buffer.from('User'),
-  //         TokenPDA.toBuffer(),
-  //         keypairs[i].publicKey.toBuffer(),
-  //       ],
-  //       program.programId
-  //     );
-  //     memberInfoAccounts.push({
-  //       pubkey: memberInfoPDA,
-  //       isSigner: false,
-  //       isWritable: true,
-  //     });
-  //   }
-  //   const remainingAccounts = [...memberInfoAccounts, ...memberAccounts];
-  //   const connection = anchor.getProvider().connection;
-  //   const lookupTableAddress = await initializeLookupTable(
-  //     admin,
-  //     connection,
-  //     remainingAccounts.map((ac) => ac.pubkey)
-  //   );
-  //   await waitForNewBlock(connection, 1);
-  //   const lookupTableAccounts = (
-  //     await connection.getAddressLookupTable(lookupTableAddress)
-  //   ).value;
-  //   if (!lookupTableAccounts) {
-  //     throw new Error('Lookup table accounts not found');
-  //   }
-  //   const multipleAddMembersAccounts = {
-  //     communityAccount: TokenPDA,
-  //     admin: admin.publicKey,
-  //     phanuelProgram: program.programId,
-  //     systemProgram: anchor.web3.SystemProgram.programId,
-  //   };
-  //   // split const memberInfoAccounts, BagAccounts into group of MAX_PER_INS
-  //   for (var i = 0; i < Math.ceil(no_member / MAX_PER_INS); i++) {
-  //     const start = i * MAX_PER_INS;
-  //     const end =
-  //       start + MAX_PER_INS > no_member ? no_member : start + MAX_PER_INS;
-  //     const memberSlice = memberAccounts.slice(start, end);
-  //     const memberInfoSlice = memberInfoAccounts.slice(start, end);
-  //     const remainingAccountsSlice = [...memberSlice, ...memberInfoSlice];
-  //     const addMemberIns = await program.methods
-  //       .addMultipleMember(memberSlice.length)
-  //       .accounts(multipleAddMembersAccounts)
-  //       .remainingAccounts(remainingAccountsSlice)
-  //       .instruction();
-  //     await sendV0Transaction(
-  //       connection,
-  //       admin,
-  //       [addMemberIns],
-  //       [lookupTableAccounts]
-  //     );
-  //   }
-  //   // TODO: deactive and close
-  //   let idx = 0;
-  //   try {
-  //     for (var i = 0; i < memberAccounts.length; i++) {
-  //       const memberInfo = await program.account.memberInfo.fetch(
-  //         memberInfoAccounts[i].pubkey
-  //       );
-  //       idx = i;
-  //     }
-  //   } catch (e: any) {
-  //     assert.ok(false, 'Cannot find member at ' + idx);
-  //   }
-  // });
+  it('Add multiple members', async () => {
+    // generate randome keypair; MAX=19!
+    const no_member = 100;
+    const keypairs = [];
+    const memberInfoAccounts = [];
+    const memberAccounts = [];
+    const MAX_PER_INS = 18;
+    for (var i = 0; i < no_member; i++) {
+      keypairs.push(Keypair.generate());
+      memberAccounts.push({
+        pubkey: keypairs[i].publicKey,
+        isSigner: false,
+        isWritable: false,
+      });
+      const [memberInfoPDA] = anchor.web3.PublicKey.findProgramAddressSync(
+        [
+          Buffer.from('User'),
+          TokenPDA.toBuffer(),
+          keypairs[i].publicKey.toBuffer(),
+        ],
+        program.programId
+      );
+      memberInfoAccounts.push({
+        pubkey: memberInfoPDA,
+        isSigner: false,
+        isWritable: true,
+      });
+    }
+    const remainingAccounts = [...memberInfoAccounts, ...memberAccounts];
+    const connection = anchor.getProvider().connection;
+    const lookupTableAddress = await initializeLookupTable(
+      admin,
+      connection,
+      remainingAccounts.map((ac) => ac.pubkey)
+    );
+    await waitForNewBlock(connection, 1);
+    const lookupTableAccounts = (
+      await connection.getAddressLookupTable(lookupTableAddress)
+    ).value;
+    if (!lookupTableAccounts) {
+      throw new Error('Lookup table accounts not found');
+    }
+    const multipleAddMembersAccounts = {
+      communityAccount: TokenPDA,
+      admin: admin.publicKey,
+      phanuelProgram: program.programId,
+      systemProgram: anchor.web3.SystemProgram.programId,
+    };
+    // split const memberInfoAccounts, BagAccounts into group of MAX_PER_INS
+    for (var i = 0; i < Math.ceil(no_member / MAX_PER_INS); i++) {
+      const start = i * MAX_PER_INS;
+      const end =
+        start + MAX_PER_INS > no_member ? no_member : start + MAX_PER_INS;
+      const memberSlice = memberAccounts.slice(start, end);
+      const memberInfoSlice = memberInfoAccounts.slice(start, end);
+      const remainingAccountsSlice = [...memberSlice, ...memberInfoSlice];
+      const addMemberIns = await program.methods
+        .addMultipleMember(memberSlice.length)
+        .accounts(multipleAddMembersAccounts)
+        .remainingAccounts(remainingAccountsSlice)
+        .instruction();
+      await sendV0Transaction(
+        connection,
+        admin,
+        [addMemberIns],
+        [lookupTableAccounts]
+      );
+    }
+    // TODO: deactive and close
+    let idx = 0;
+    try {
+      for (var i = 0; i < memberAccounts.length; i++) {
+        const memberInfo = await program.account.memberInfo.fetch(
+          memberInfoAccounts[i].pubkey
+        );
+        idx = i;
+      }
+    } catch (e: any) {
+      assert.ok(false, 'Cannot find member at ' + idx);
+    }
+  });
   it('Disable & Remove member', async () => {
     const addMembersAccounts = {
       communityAccount: TokenPDA,
@@ -459,141 +459,141 @@ describe('phanuel', () => {
       assert.ok(false, 'Cannot mint');
     }
   });
-  // it('Mint multiple members', async () => {
-  //   // generate randome keypair; MAX=19!
-  //   const MAX_PER_INS = 18;
-  //   const noOfMembers = 100;
-  //   const keypairs = [];
-  //   for (var i = 0; i < noOfMembers; i++) {
-  //     keypairs.push(Keypair.generate());
-  //   }
-  //   // let's add w3, w4, w5 as members
-  //   const addMember = async (pubK) => {
-  //     const [memberInfoPDA] = anchor.web3.PublicKey.findProgramAddressSync(
-  //       [Buffer.from('User'), TokenPDA.toBuffer(), pubK.toBuffer()],
-  //       program.programId
-  //     );
-  //     const addMembersAccounts = {
-  //       communityAccount: TokenPDA,
-  //       memberInfo: memberInfoPDA,
-  //       admin: admin.publicKey,
-  //       member: pubK,
-  //       phanuelProgram: program.programId,
-  //     };
-  //     await program.methods
-  //       .addMember()
-  //       .accounts(addMembersAccounts)
-  //       .signers([admin])
-  //       .rpc();
-  //     const memberInfo = await program.account.memberInfo.fetch(memberInfoPDA);
-  //     assert.equal(
-  //       memberInfo.member.toBase58(),
-  //       pubK.toBase58(),
-  //       'Member mismatched ' + pubK.toBase58()
-  //     );
-  //   };
-  //   for (var i = 0; i < keypairs.length; i++) {
-  //     await addMember(keypairs[i].publicKey);
-  //   }
+  it('Mint multiple members', async () => {
+    // generate randome keypair; MAX=19!
+    const MAX_PER_INS = 18;
+    const noOfMembers = 100;
+    const keypairs = [];
+    for (var i = 0; i < noOfMembers; i++) {
+      keypairs.push(Keypair.generate());
+    }
+    // let's add w3, w4, w5 as members
+    const addMember = async (pubK) => {
+      const [memberInfoPDA] = anchor.web3.PublicKey.findProgramAddressSync(
+        [Buffer.from('User'), TokenPDA.toBuffer(), pubK.toBuffer()],
+        program.programId
+      );
+      const addMembersAccounts = {
+        communityAccount: TokenPDA,
+        memberInfo: memberInfoPDA,
+        admin: admin.publicKey,
+        member: pubK,
+        phanuelProgram: program.programId,
+      };
+      await program.methods
+        .addMember()
+        .accounts(addMembersAccounts)
+        .signers([admin])
+        .rpc();
+      const memberInfo = await program.account.memberInfo.fetch(memberInfoPDA);
+      assert.equal(
+        memberInfo.member.toBase58(),
+        pubK.toBase58(),
+        'Member mismatched ' + pubK.toBase58()
+      );
+    };
+    for (var i = 0; i < keypairs.length; i++) {
+      await addMember(keypairs[i].publicKey);
+    }
 
-  //   const mintAmount = new anchor.BN(500);
-  //   const toMint = [...keypairs.map((k) => k.publicKey)];
-  //   const memberInfoAccounts = [];
-  //   const BagAccounts = [];
-  //   for (var i = 0; i < toMint.length; i++) {
-  //     const member = toMint[i];
-  //     const [memberInfoPDA] = anchor.web3.PublicKey.findProgramAddressSync(
-  //       [Buffer.from('User'), TokenPDA.toBuffer(), member.toBuffer()],
-  //       program.programId
-  //     );
-  //     memberInfoAccounts.push({
-  //       pubkey: memberInfoPDA,
-  //       isSigner: false,
-  //       isWritable: true,
-  //     });
-  //     const memberInfo = await program.account.memberInfo.fetch(memberInfoPDA);
-  //     const [bagPDA] = anchor.web3.PublicKey.findProgramAddressSync(
-  //       [
-  //         Buffer.from('Bag'),
-  //         memberInfoPDA.toBuffer(),
-  //         new anchor.BN(memberInfo.max).toArrayLike(Buffer, 'le', 8),
-  //       ],
-  //       program.programId
-  //     );
-  //     BagAccounts.push({ pubkey: bagPDA, isSigner: false, isWritable: true });
-  //   }
-  //   const multipleMintAccounts = {
-  //     communityAccount: TokenPDA,
-  //     admin: admin.publicKey,
-  //     clock: anchor.web3.SYSVAR_CLOCK_PUBKEY,
-  //     phanuelProgram: program.programId,
-  //     systemProgram: anchor.web3.SystemProgram.programId,
-  //   };
-  //   const remainingAccounts = [...memberInfoAccounts, ...BagAccounts];
-  //   // await program.methods
-  //   //   .multipleMint(memberInfoAccounts.length, mintAmount)
-  //   //   .accounts(multipleMintAccounts)
-  //   //   .remainingAccounts(remainingAccounts)
-  //   //   .signers([admin])
-  //   //   .rpc();
-  //   const connection = anchor.getProvider().connection;
-  //   const lookupTableAddress = await initializeLookupTable(
-  //     admin,
-  //     connection,
-  //     remainingAccounts.map((ac) => ac.pubkey)
-  //   );
-  //   await waitForNewBlock(connection, 1);
+    const mintAmount = new anchor.BN(500);
+    const toMint = [...keypairs.map((k) => k.publicKey)];
+    const memberInfoAccounts = [];
+    const BagAccounts = [];
+    for (var i = 0; i < toMint.length; i++) {
+      const member = toMint[i];
+      const [memberInfoPDA] = anchor.web3.PublicKey.findProgramAddressSync(
+        [Buffer.from('User'), TokenPDA.toBuffer(), member.toBuffer()],
+        program.programId
+      );
+      memberInfoAccounts.push({
+        pubkey: memberInfoPDA,
+        isSigner: false,
+        isWritable: true,
+      });
+      const memberInfo = await program.account.memberInfo.fetch(memberInfoPDA);
+      const [bagPDA] = anchor.web3.PublicKey.findProgramAddressSync(
+        [
+          Buffer.from('Bag'),
+          memberInfoPDA.toBuffer(),
+          new anchor.BN(memberInfo.max).toArrayLike(Buffer, 'le', 8),
+        ],
+        program.programId
+      );
+      BagAccounts.push({ pubkey: bagPDA, isSigner: false, isWritable: true });
+    }
+    const multipleMintAccounts = {
+      communityAccount: TokenPDA,
+      admin: admin.publicKey,
+      clock: anchor.web3.SYSVAR_CLOCK_PUBKEY,
+      phanuelProgram: program.programId,
+      systemProgram: anchor.web3.SystemProgram.programId,
+    };
+    const remainingAccounts = [...memberInfoAccounts, ...BagAccounts];
+    // await program.methods
+    //   .multipleMint(memberInfoAccounts.length, mintAmount)
+    //   .accounts(multipleMintAccounts)
+    //   .remainingAccounts(remainingAccounts)
+    //   .signers([admin])
+    //   .rpc();
+    const connection = anchor.getProvider().connection;
+    const lookupTableAddress = await initializeLookupTable(
+      admin,
+      connection,
+      remainingAccounts.map((ac) => ac.pubkey)
+    );
+    await waitForNewBlock(connection, 1);
 
-  //   const lookupTableAccounts = (
-  //     await connection.getAddressLookupTable(lookupTableAddress)
-  //   ).value;
-  //   if (!lookupTableAccounts) {
-  //     throw new Error('Lookup table accounts not found');
-  //   }
+    const lookupTableAccounts = (
+      await connection.getAddressLookupTable(lookupTableAddress)
+    ).value;
+    if (!lookupTableAccounts) {
+      throw new Error('Lookup table accounts not found');
+    }
 
-  //   // split const memberInfoAccounts, BagAccounts into group of MAX_PER_INS
-  //   for (var i = 0; i < Math.ceil(noOfMembers / MAX_PER_INS); i++) {
-  //     const start = i * MAX_PER_INS;
-  //     const end =
-  //       start + MAX_PER_INS > noOfMembers ? noOfMembers : start + MAX_PER_INS;
-  //     const bagSlice = BagAccounts.slice(start, end);
-  //     const memberSlice = memberInfoAccounts.slice(start, end);
-  //     const remainingAccountsSlice = [...memberSlice, ...bagSlice];
-  //     const mintIns = await program.methods
-  //       .multipleMint(memberSlice.length, mintAmount)
-  //       .accounts(multipleMintAccounts)
-  //       .remainingAccounts(remainingAccountsSlice)
-  //       .instruction();
-  //     await sendV0Transaction(
-  //       connection,
-  //       admin,
-  //       [mintIns],
-  //       [lookupTableAccounts]
-  //     );
-  //   }
+    // split const memberInfoAccounts, BagAccounts into group of MAX_PER_INS
+    for (var i = 0; i < Math.ceil(noOfMembers / MAX_PER_INS); i++) {
+      const start = i * MAX_PER_INS;
+      const end =
+        start + MAX_PER_INS > noOfMembers ? noOfMembers : start + MAX_PER_INS;
+      const bagSlice = BagAccounts.slice(start, end);
+      const memberSlice = memberInfoAccounts.slice(start, end);
+      const remainingAccountsSlice = [...memberSlice, ...bagSlice];
+      const mintIns = await program.methods
+        .multipleMint(memberSlice.length, mintAmount)
+        .accounts(multipleMintAccounts)
+        .remainingAccounts(remainingAccountsSlice)
+        .instruction();
+      await sendV0Transaction(
+        connection,
+        admin,
+        [mintIns],
+        [lookupTableAccounts]
+      );
+    }
 
-  //   // TODO: deactive and close
-  //   for (var i = 0; i < toMint.length; i++) {
-  //     // const memberInfo = await program.account.memberInfo.fetch(
-  //     //   memberInfoAccounts[i].pubkey
-  //     // );
-  //     try {
-  //       const bagInfo = await program.account.bag.fetch(BagAccounts[i].pubkey);
-  //       assert.equal(
-  //         bagInfo.amount.toNumber(),
-  //         mintAmount.toNumber(),
-  //         'Minted amount mismatched'
-  //       );
-  //     } catch (e) {
-  //       console.log(
-  //         'NOT FOUND bag: ',
-  //         BagAccounts[i].pubkey.toBase58(),
-  //         ' of ',
-  //         keypairs[i].publicKey.toBase58()
-  //       );
-  //     }
-  //   }
-  // });
+    // TODO: deactive and close
+    for (var i = 0; i < toMint.length; i++) {
+      // const memberInfo = await program.account.memberInfo.fetch(
+      //   memberInfoAccounts[i].pubkey
+      // );
+      try {
+        const bagInfo = await program.account.bag.fetch(BagAccounts[i].pubkey);
+        assert.equal(
+          bagInfo.amount.toNumber(),
+          mintAmount.toNumber(),
+          'Minted amount mismatched'
+        );
+      } catch (e) {
+        console.log(
+          'NOT FOUND bag: ',
+          BagAccounts[i].pubkey.toBase58(),
+          ' of ',
+          keypairs[i].publicKey.toBase58()
+        );
+      }
+    }
+  });
   it('Transfer token', async () => {
     const w1Info = await program.account.memberInfo.fetch(w1PDA);
     const note = 'Amazing website design!';
