@@ -275,7 +275,7 @@ export type Phanuel = {
               },
               {
                 "kind": "account",
-                "path": "admin"
+                "path": "random"
               }
             ]
           }
@@ -284,6 +284,9 @@ export type Phanuel = {
           "name": "admin",
           "writable": true,
           "signer": true
+        },
+        {
+          "name": "random"
         },
         {
           "name": "systemProgram",

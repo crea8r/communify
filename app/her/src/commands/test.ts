@@ -1,5 +1,5 @@
 import { Telegraf } from 'telegraf';
-import isAdmin from './lib/isAdmin';
+import isAdmin from './_lib/isAdmin';
 const test = async (ctx: any, bot: Telegraf) => {
   console.log(ctx.update);
   const chat = ctx.update.message.chat;

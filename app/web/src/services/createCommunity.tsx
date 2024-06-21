@@ -22,6 +22,7 @@ const create = async ({
   let program = getProgram();
   const accounts = {
     admin: admin.publicKey,
+    random: admin.publicKey,
     communityAccount: anchor.web3.PublicKey.findProgramAddressSync(
       [Buffer.from('MINT'), admin.publicKey.toBuffer()],
       program.programId

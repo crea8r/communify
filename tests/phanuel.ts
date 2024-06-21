@@ -35,8 +35,9 @@ describe('phanuel', () => {
     .payer as anchor.web3.Keypair;
   const w1 = loadKeypairFromFile('./tests/w1.json');
   const w2 = loadKeypairFromFile('./tests/w2.json');
+  const rand = anchor.web3.Keypair.generate();
   const [TokenPDA] = anchor.web3.PublicKey.findProgramAddressSync(
-    [Buffer.from('MINT'), admin.publicKey.toBuffer()],
+    [Buffer.from('MINT'), rand.publicKey.toBuffer()],
     program.programId
   );
   const [w1PDA] = anchor.web3.PublicKey.findProgramAddressSync(
@@ -113,6 +114,7 @@ describe('phanuel', () => {
     const createAccounts = {
       communityAccount: TokenPDA,
       admin: admin.publicKey,
+      random: rand.publicKey,
     };
     await program.methods
       .create(symbol, decay)
