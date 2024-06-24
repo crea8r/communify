@@ -95,6 +95,11 @@
           ]
         },
         {
+          "name": "renter",
+          "writable": true,
+          "signer": true
+        },
+        {
           "name": "member"
         },
         {
@@ -132,6 +137,11 @@
           "relations": [
             "community_account"
           ]
+        },
+        {
+          "name": "renter",
+          "writable": true,
+          "signer": true
         },
         {
           "name": "system_program",
@@ -172,6 +182,11 @@
           "relations": [
             "community_account"
           ]
+        },
+        {
+          "name": "renter",
+          "writable": true,
+          "signer": true
         },
         {
           "name": "system_program",
@@ -285,6 +300,11 @@
         {
           "name": "system_program",
           "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "renter",
+          "writable": true,
+          "signer": true
         }
       ],
       "args": [
@@ -358,6 +378,11 @@
           "relations": [
             "community_account"
           ]
+        },
+        {
+          "name": "renter",
+          "writable": true,
+          "signer": true
         },
         {
           "name": "system_program",
@@ -463,6 +488,11 @@
           ]
         },
         {
+          "name": "renter",
+          "writable": true,
+          "signer": true
+        },
+        {
           "name": "bag",
           "writable": true,
           "pda": {
@@ -543,6 +573,11 @@
           ]
         },
         {
+          "name": "renter",
+          "writable": true,
+          "signer": true
+        },
+        {
           "name": "clock",
           "address": "SysvarC1ock11111111111111111111111111111111"
         },
@@ -610,6 +645,11 @@
           "relations": [
             "community_account"
           ]
+        },
+        {
+          "name": "renter",
+          "writable": true,
+          "signer": true
         },
         {
           "name": "system_program",
@@ -686,6 +726,11 @@
           ]
         },
         {
+          "name": "renter",
+          "writable": true,
+          "signer": true
+        },
+        {
           "name": "system_program",
           "address": "11111111111111111111111111111111"
         }
@@ -749,6 +794,11 @@
       "accounts": [
         {
           "name": "sender",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "renter",
           "writable": true,
           "signer": true
         },

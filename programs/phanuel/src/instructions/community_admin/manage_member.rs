@@ -10,13 +10,15 @@ use crate::writer::*;
 pub struct AddMemberCtx<'info> {
 	#[account(mut, has_one = admin)]
 	pub community_account: Account<'info, CommunityAccount>,
-	#[account(init, payer = admin, 
+	#[account(init, payer = renter, 
 		seeds=[MemberInfo::SEED, community_account.key().as_ref(), member.key().as_ref()], bump,
 		space = 8 + MemberInfo::INIT_SPACE,
 		owner = phanuel_program.key.clone())]
 	pub member_info: Account<'info, MemberInfo>,
 	#[account(mut)]
 	pub admin: Signer<'info>,
+	#[account(mut)]
+	pub renter: Signer<'info>,
 	/// CHECK: community member, checked in the member_info account
 	pub member: AccountInfo<'info>,
 	pub system_program: Program<'info, System>,
@@ -73,6 +75,8 @@ pub struct AddMultipleMemberCtx<'info> {
 	pub community_account: Account<'info, CommunityAccount>,
 	#[account(mut)]
 	pub admin: Signer<'info>,
+	#[account(mut)]
+	pub renter: Signer<'info>,
 	pub system_program: Program<'info, System>,
 	#[account(address = ID)]
 	/// CHECK: phanuel program
@@ -103,7 +107,7 @@ pub fn run_add_multiple_member<'c: 'info, 'info>(ctx: Context<'_, '_, 'c, 'info,
 				return Err(ErrorCode::InvalidBagPDA.into());
 			}
 			create_account(ctx.accounts.system_program.to_account_info(), 
-				ctx.accounts.admin.to_account_info(), 
+				ctx.accounts.renter.to_account_info(), 
 				account_info.to_account_info(), 
 				seeds, bump, 
 				8 + MemberInfo::INIT_SPACE, ctx.accounts.phanuel_program.key)?;

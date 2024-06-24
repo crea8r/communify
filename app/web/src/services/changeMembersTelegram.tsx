@@ -36,6 +36,7 @@ const changeMembersTelegram = async ({
       memberInfo: memberInfoPDA,
       communityAccount,
       admin: admin.publicKey,
+      renter: admin.publicKey,
     };
     intructions.push(
       await program.methods

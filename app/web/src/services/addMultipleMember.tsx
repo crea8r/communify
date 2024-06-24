@@ -41,6 +41,7 @@ const addMultipleMember = async ({
     clock: anchor.web3.SYSVAR_CLOCK_PUBKEY,
     phanuelProgram: program.programId,
     systemProgram: anchor.web3.SystemProgram.programId,
+    renter: admin.publicKey,
   };
   const memberInfoAccounts = [];
   const memberAccounts = [];

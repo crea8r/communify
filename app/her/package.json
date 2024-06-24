@@ -14,6 +14,16 @@
   ],
   "author": "0xk2_",
   "license": "MIT",
+  "nodemonConfig": {
+    "watch": [
+      "src"
+    ],
+    "ext": "ts",
+    "ignore": [
+      "src/**/*.spec.ts"
+    ],
+    "exec": "ts-node ./src/index.ts"
+  },
   "devDependencies": {
     "tslint": "^6.1.3",
     "typescript": "^5.4.5"

@@ -4,6 +4,8 @@ import getSession from '../_lib/session/get';
 import isAdmin from '../_lib/isAdmin';
 import getCommunity from '../../services/getCommunity';
 import { Session } from '../_type';
+import createCommunity from '../../services/createCommunity';
+import * as anchor from '@coral-xyz/anchor';
 
 const extractPayload = (payload: string) => {
   const tokens = payload.split(' ');
@@ -12,7 +14,7 @@ const extractPayload = (payload: string) => {
   if (!symbol || !expire || !parseInt(expire)) {
     return null;
   }
-  return { symbol, expire };
+  return { symbol, expire: parseInt(expire) };
 };
 
 // perform in the group chat
@@ -46,8 +48,27 @@ const register = async (ctx: any, bot: Telegraf) => {
   if (community) {
     return ctx.reply('This community is already registered.');
   } else {
-    // interact with on-chain program
-    // - create new community: ask for the POINT symbol and expire time
-    // - create a mnemonic for each of the community members; skip if found one
+    const { data, error } = await createCommunity(
+      mnemonic,
+      extractedPayload.symbol,
+      extractedPayload.expire
+    );
+    if (!data) {
+      return ctx.reply(error);
+    }
+    return ctx.reply(
+      'Community registered successfully. Community detail is [here](' +
+        process.env.SOLANA_EXPLORER_URL +
+        '/address/' +
+        (data.publicKey as anchor.web3.PublicKey).toBase58() +
+        '?cluster=' +
+        process.env.SOLANA_CLUSTER +
+        ')',
+      {
+        parse_mode: 'Markdown',
+      }
+    );
   }
 };
+
+export default register;

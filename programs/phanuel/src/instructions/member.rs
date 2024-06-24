@@ -65,6 +65,8 @@ pub fn close_bag(ctx: Context<CloseBagCtx>, forced: bool) -> Result<()>{
 pub struct TransferCtx<'info> {
 	#[account(mut)]
 	pub sender: Signer<'info>,
+  #[account(mut)]
+	pub renter: Signer<'info>,
 	/// CHECK: already check on bag
 	pub member: AccountInfo<'info>, // receiver
 	#[account(mut, has_one = member)]
@@ -77,7 +79,7 @@ pub struct TransferCtx<'info> {
 	pub bag: Account<'info, Bag>,
 	pub community_account: Account<'info, CommunityAccount>,
 	pub system_program: Program<'info, System>,
-  #[account(init, payer = sender, 
+  #[account(init, payer = renter, 
 		seeds=[Memo::SEED, receiver_info.key().as_ref(), &receiver_info.max.to_le_bytes()], bump, 
 		space=8 + Memo::INIT_SPACE, owner = phanuel_program.key.clone())]
 	pub memo: Account<'info, Memo>,

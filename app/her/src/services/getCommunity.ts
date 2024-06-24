@@ -8,14 +8,15 @@ import {
 import getConnection from '../config/connection';
 import * as anchor from '@coral-xyz/anchor';
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes';
+import { TelegramCommunityAccountSchema } from './_schemas';
 
 const getCommunity = async (chat_id: string) => {
   // filter the blockchain for the community
-  const chatId = new anchor.BN(chat_id);
+  console.log('chat_id: ', chat_id);
   try {
     const connection = getConnection();
     const encoder = getI64Encoder();
-    const telegramCommunity = await connection.getAccountInfo(
+    const telegramCommunities = await connection.getProgramAccounts(
       new anchor.web3.PublicKey(idl.address),
       {
         dataSlice: { offset: 0, length: 8 + 32 + 8 },
@@ -33,21 +34,24 @@ const getCommunity = async (chat_id: string) => {
           {
             memcmp: {
               offset: 8 + 32,
-              bytes: bs58.encode(encoder.encode(chatId)),
+              bytes: bs58.encode(encoder.encode(chat_id)),
             },
           },
         ],
       }
     );
-    const telegramCommunityData = TelegramCommunitySchema.decode(
-      telegramCommunity[0].account.data
-    );
-    const info = await connection.getAccountInfo(
-      telegramCommunityData.community
-    );
-    return CommunityAccountSchema.decode(info.data);
+    if (telegramCommunities.length === 0) {
+      return false;
+    } else {
+      const telegramCommunityData = TelegramCommunityAccountSchema.decode(
+        telegramCommunities[0].account.data
+      );
+      const info = await connection.getAccountInfo(
+        telegramCommunityData.community
+      );
+      return CommunityAccountSchema.decode(info.data);
+    }
   } catch (e) {
-    console.log(e);
     return false;
   }
 };

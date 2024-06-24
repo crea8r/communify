@@ -30,6 +30,7 @@ const addMember = async ({
     member,
     admin: admin.publicKey,
     phanuelProgram: program.programId,
+    renter: admin.publicKey,
   };
   const txn = await program.methods
     .addMember()

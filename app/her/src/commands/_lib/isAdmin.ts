@@ -4,7 +4,11 @@ const isAdmin = async (ctx: any, bot: Telegraf) => {
   const chat = ctx.update.message.chat;
   const groupId = chat.id;
   const from = ctx.update.message.from;
-  if (chat.type === 'group') {
+  if (
+    chat.type === 'group' ||
+    chat.type === 'supergroup' ||
+    chat.type === 'channel'
+  ) {
     const admins = await bot.telegram.getChatAdministrators(groupId);
     const found = admins.find((a: any) => a.user.id === from.id);
     if (found) {

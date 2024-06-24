@@ -97,6 +97,7 @@ export const transfer = async ({
   );
   const accounts = {
     sender: sender.publicKey,
+    renter: sender.publicKey,
     member: receiver,
     phanuelProgram: program.programId,
     receiverInfo: receiverPDA,

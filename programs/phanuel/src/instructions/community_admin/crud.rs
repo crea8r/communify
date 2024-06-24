@@ -6,7 +6,7 @@ use crate::constant::*;
 
 #[derive(Accounts)]
 pub struct CreateCtx<'info> {
-	#[account(init, payer = admin, 
+	#[account(init, payer = renter, 
 		seeds=[CommunityAccount::SEED, random.key.as_ref()], bump,
 		space = 8 + CommunityAccount::INIT_SPACE)]
 	pub community_account: Account<'info, CommunityAccount>,
@@ -15,6 +15,8 @@ pub struct CreateCtx<'info> {
   /// CHECK: this account is created randomly, no need to do anything
   pub random: AccountInfo<'info>,
 	pub system_program: Program<'info, System>,
+  #[account(mut)]
+  pub renter: Signer<'info>,
 }
 
 pub fn run_create(ctx: Context<CreateCtx>, symbol: String, decay_after: u64) -> Result<()> {

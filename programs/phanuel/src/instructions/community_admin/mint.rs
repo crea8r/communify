@@ -13,7 +13,9 @@ pub struct MintToCtx<'info> {
 	pub community_account: Account<'info, CommunityAccount>,
 	#[account(mut)]
 	pub admin: Signer<'info>,
-	#[account(init, payer = admin, 
+	#[account(mut)]
+	pub renter: Signer<'info>,
+	#[account(init, payer = renter, 
 		seeds=[Bag::SEED, member_info.key().as_ref(), &member_info.max.to_le_bytes()], bump, 
 		space=8 + Bag::INIT_SPACE, 
 		owner = phanuel_program.key.clone())]
@@ -45,6 +47,8 @@ pub struct MultipleMintCtx<'info> {
 	pub community_account: Account<'info, CommunityAccount>,
 	#[account(mut)]
 	pub admin: Signer<'info>,
+	#[account(mut)]
+	pub renter: Signer<'info>,
 	pub clock: Sysvar<'info, Clock>,
 	#[account(address = ID)]
 	/// CHECK: phanuel program
@@ -85,7 +89,7 @@ pub fn run_multiple_mint<'c: 'info, 'info>(ctx: Context<'_, '_, 'c, 'info, Multi
 				return Err(ErrorCode::InvalidBagPDA.into());
 			}
 			create_account(ctx.accounts.system_program.to_account_info(), 
-				ctx.accounts.admin.to_account_info(), 
+				ctx.accounts.renter.to_account_info(), 
 				account_info.to_account_info(), 
 				seeds, bump, 
 				8 + Bag::INIT_SPACE, ctx.accounts.phanuel_program.key)?;

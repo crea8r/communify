@@ -4,7 +4,7 @@ use crate::errors::ErrorCode;
 
 #[derive(Accounts)]
 pub struct MutTelegramCtx<'info> {
-	#[account(init_if_needed, payer = admin, 
+	#[account(init_if_needed, payer = renter, 
 		seeds=[TelegramCommunity::SEED, community_account.key().as_ref()], bump,
 		space = 8 + TelegramCommunity::INIT_SPACE)]
 	pub telegram_community: Account<'info, TelegramCommunity>,
@@ -12,6 +12,8 @@ pub struct MutTelegramCtx<'info> {
   pub community_account: Account<'info, CommunityAccount>,
 	#[account(mut)]
 	pub admin: Signer<'info>,
+  #[account(mut)]
+	pub renter: Signer<'info>,
 	pub system_program: Program<'info, System>,
 }
 
@@ -24,7 +26,7 @@ pub fn run_mut_telegram(ctx: Context<MutTelegramCtx>, chat_id: i64) -> Result<()
 
 #[derive(Accounts)]
 pub struct MutMemberTelegramCtx<'info> {
-	#[account(init_if_needed, payer = admin, 
+	#[account(init_if_needed, payer = renter, 
 		seeds=[TelegramMemberInfo::SEED, member_info.key().as_ref()], bump,
 		space = 8 + TelegramMemberInfo::INIT_SPACE)]
 	pub telegram_member_info: Account<'info, TelegramMemberInfo>,
@@ -33,6 +35,8 @@ pub struct MutMemberTelegramCtx<'info> {
   pub community_account: Account<'info, CommunityAccount>,
 	#[account(mut)]
 	pub admin: Signer<'info>,
+  #[account(mut)]
+	pub renter: Signer<'info>,
 	pub system_program: Program<'info, System>,
 }
 
@@ -53,6 +57,8 @@ pub struct MutMultipleMemberTelegramCtx<'info> {
   pub community_account: Account<'info, CommunityAccount>,
 	#[account(mut)]
 	pub admin: Signer<'info>,
+  #[account(mut)]
+	pub renter: Signer<'info>,
 	pub system_program: Program<'info, System>,
 }
 

@@ -1,4 +1,4 @@
-import bip39 from 'bip39';
+import * as bip39 from 'bip39';
 import supabase from '../../config/supabase';
 
 const createMnemonic = async (username: string) => {

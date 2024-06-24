@@ -101,6 +101,11 @@ export type Phanuel = {
           ]
         },
         {
+          "name": "renter",
+          "writable": true,
+          "signer": true
+        },
+        {
           "name": "member"
         },
         {
@@ -138,6 +143,11 @@ export type Phanuel = {
           "relations": [
             "communityAccount"
           ]
+        },
+        {
+          "name": "renter",
+          "writable": true,
+          "signer": true
         },
         {
           "name": "systemProgram",
@@ -178,6 +188,11 @@ export type Phanuel = {
           "relations": [
             "communityAccount"
           ]
+        },
+        {
+          "name": "renter",
+          "writable": true,
+          "signer": true
         },
         {
           "name": "systemProgram",
@@ -291,6 +306,11 @@ export type Phanuel = {
         {
           "name": "systemProgram",
           "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "renter",
+          "writable": true,
+          "signer": true
         }
       ],
       "args": [
@@ -364,6 +384,11 @@ export type Phanuel = {
           "relations": [
             "communityAccount"
           ]
+        },
+        {
+          "name": "renter",
+          "writable": true,
+          "signer": true
         },
         {
           "name": "systemProgram",
@@ -469,6 +494,11 @@ export type Phanuel = {
           ]
         },
         {
+          "name": "renter",
+          "writable": true,
+          "signer": true
+        },
+        {
           "name": "bag",
           "writable": true,
           "pda": {
@@ -549,6 +579,11 @@ export type Phanuel = {
           ]
         },
         {
+          "name": "renter",
+          "writable": true,
+          "signer": true
+        },
+        {
           "name": "clock",
           "address": "SysvarC1ock11111111111111111111111111111111"
         },
@@ -616,6 +651,11 @@ export type Phanuel = {
           "relations": [
             "communityAccount"
           ]
+        },
+        {
+          "name": "renter",
+          "writable": true,
+          "signer": true
         },
         {
           "name": "systemProgram",
@@ -692,6 +732,11 @@ export type Phanuel = {
           ]
         },
         {
+          "name": "renter",
+          "writable": true,
+          "signer": true
+        },
+        {
           "name": "systemProgram",
           "address": "11111111111111111111111111111111"
         }
@@ -755,6 +800,11 @@ export type Phanuel = {
       "accounts": [
         {
           "name": "sender",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "renter",
           "writable": true,
           "signer": true
         },

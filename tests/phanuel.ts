@@ -115,17 +115,18 @@ describe('phanuel', () => {
       communityAccount: TokenPDA,
       admin: admin.publicKey,
       random: rand.publicKey,
+      renter: admin.publicKey,
     };
     await program.methods
       .create(symbol, decay)
       .accounts(createAccounts)
-      .signers([admin])
+      .signers([])
       .rpc();
     try {
       let TokenInfo = await program.account.communityAccount.fetch(TokenPDA);
       assert.equal(TokenInfo.decayAfter.toNumber(), decay.toNumber());
 
-      const newsymbol = 'TEST2';
+      const newsymbol = 'TEST3';
       const newdecay = new anchor.BN(10 * SECONDS_PER_DAY);
       const updateAccounts = {
         communityAccount: TokenPDA,
@@ -162,6 +163,7 @@ describe('phanuel', () => {
       communityAccount: TokenPDA,
       admin: admin.publicKey,
       telegramCommunity: telegramPDA,
+      renter: admin.publicKey,
     };
     await program.methods
       .mutCommunityTelegram(new anchor.BN(chatId))
@@ -202,6 +204,7 @@ describe('phanuel', () => {
       admin: admin.publicKey,
       member: w1.publicKey,
       phanuelProgram: program.programId,
+      renter: admin.publicKey,
     };
     const txn = await program.methods
       .addMember()
@@ -229,6 +232,7 @@ describe('phanuel', () => {
       admin: admin.publicKey,
       telegramMemberInfo: telegramPDA,
       memberInfo: w1PDA,
+      renter: admin.publicKey,
     };
     await program.methods
       .mutMemberTelegram(username)
@@ -309,6 +313,7 @@ describe('phanuel', () => {
       admin: admin.publicKey,
       phanuelProgram: program.programId,
       systemProgram: anchor.web3.SystemProgram.programId,
+      renter: admin.publicKey,
     };
     // split const memberInfoAccounts, BagAccounts into group of MAX_PER_INS
     for (var i = 0; i < Math.ceil(no_member / MAX_PER_INS); i++) {
@@ -350,6 +355,7 @@ describe('phanuel', () => {
       admin: admin.publicKey,
       member: w2.publicKey,
       phanuelProgram: program.programId,
+      renter: admin.publicKey,
     };
     await program.methods
       .addMember()
@@ -432,6 +438,7 @@ describe('phanuel', () => {
       member: w1.publicKey,
       clock: anchor.web3.SYSVAR_CLOCK_PUBKEY,
       phanuelProgram: program.programId,
+      renter: admin.publicKey,
     };
     await program.methods
       .mintTo(mintAmount)
@@ -481,6 +488,7 @@ describe('phanuel', () => {
         admin: admin.publicKey,
         member: pubK,
         phanuelProgram: program.programId,
+        renter: admin.publicKey,
       };
       await program.methods
         .addMember()
@@ -530,6 +538,7 @@ describe('phanuel', () => {
       clock: anchor.web3.SYSVAR_CLOCK_PUBKEY,
       phanuelProgram: program.programId,
       systemProgram: anchor.web3.SystemProgram.programId,
+      renter: admin.publicKey,
     };
     const remainingAccounts = [...memberInfoAccounts, ...BagAccounts];
     // await program.methods
@@ -616,6 +625,7 @@ describe('phanuel', () => {
       admin: admin.publicKey,
       member: w2.publicKey,
       phanuelProgram: program.programId,
+      renter: admin.publicKey,
     };
     await program.methods
       .addMember()
@@ -653,6 +663,7 @@ describe('phanuel', () => {
       clock: anchor.web3.SYSVAR_CLOCK_PUBKEY,
       senderInfo: w1PDA,
       memo,
+      renter: w1.publicKey,
     };
     try {
       const w1bagInfo = await program.account.bag.fetch(w1bagPDA);

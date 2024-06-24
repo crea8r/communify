@@ -46,6 +46,7 @@ const mintTo = async ({
     phanuelProgram: program.programId,
     clock: anchor.web3.SYSVAR_CLOCK_PUBKEY,
     systemProgram: anchor.web3.SystemProgram.programId,
+    renter: admin.publicKey,
   };
   const txn = await program.methods
     .mintTo(new anchor.BN(amount))

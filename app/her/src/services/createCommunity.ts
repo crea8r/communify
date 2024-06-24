@@ -23,20 +23,26 @@ const createCommunity = async (
     random: rand.publicKey,
     communityAccount,
   };
-  await program.methods
-    .create(symbol, new anchor.BN(expire))
-    .accounts(accounts)
-    .signers([admin])
-    .rpc();
   try {
+    await program.methods
+      .create(symbol, new anchor.BN(expire))
+      .accounts(accounts)
+      .signers([admin])
+      .rpc();
     const rs = await connection.getAccountInfo(communityAccount);
     return {
-      ...CommunityAccountSchema.decode(rs?.data),
-      publicKey: communityAccount,
+      data: {
+        ...CommunityAccountSchema.decode(rs?.data),
+        publicKey: communityAccount,
+      },
+      error: null,
     };
-  } catch (e) {
+  } catch (e: any) {
     console.log('Error creating community: ', e);
-    return null;
+    return {
+      data: null,
+      error: e,
+    };
   }
 };
 

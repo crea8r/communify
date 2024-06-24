@@ -1,22 +1,12 @@
 import { Telegraf } from 'telegraf';
-import isAdmin from './_lib/isAdmin';
+import * as bip39 from 'bip39';
+import getCommunity from '../services/getCommunity';
+import createCommunity from '../services/createCommunity';
 const test = async (ctx: any, bot: Telegraf) => {
-  console.log(ctx.update);
-  const chat = ctx.update.message.chat;
-  const groupId = chat.id;
-  const from = ctx.update.message.from;
-  // console.log(ctx.payload);
-  // if (ctx.payload == '@HeyCap') {
-  //   ctx.reply('Badges: Front End, Novice');
-  // }
-  const { result, message } = await isAdmin(ctx, bot);
-  if (!result) {
-    return ctx.reply(message, {
-      reply_to_message_id: ctx.update.message.message_id,
-    });
-  }
-  return ctx.reply('Hello admin', {
-    reply_to_message_id: ctx.update.message.message_id,
-  });
+  const mnemonic = bip39.generateMnemonic();
+  // const community = await getCommunity('-1002002393144');
+  const rs = await createCommunity(mnemonic, 'HER', 365);
+  console.log('rs: ', rs);
+  ctx.reply(rs);
 };
 export default test;

@@ -30,6 +30,7 @@ const upsertCommunityTelegram = async ({
       communityAccount: communityPDA,
       telegramCommunity: telegramCommunityPDA,
       admin: admin.publicKey,
+      renter: admin.publicKey,
     };
     const txn = await program.methods
       .mutCommunityTelegram(new anchor.BN(chatId))

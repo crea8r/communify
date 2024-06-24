@@ -27,6 +27,7 @@ const create = async ({
       [Buffer.from('MINT'), admin.publicKey.toBuffer()],
       program.programId
     )[0],
+    renter: admin.publicKey,
   };
   const txn = await program.methods
     .create(tokenSymbol, new anchor.BN(decayTime))

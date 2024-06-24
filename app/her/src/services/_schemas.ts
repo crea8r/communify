@@ -1,30 +1,36 @@
 import * as borsh from '@coral-xyz/borsh';
 
 export const TelegramCommunityAccountSchema = borsh.struct([
+  borsh.u64('discriminator'),
   borsh.publicKey('community'),
-  borsh.publicKey('chat_id'),
+  borsh.i64('chat_id'),
 ]);
 export const CommunityAccountSchema = borsh.struct([
+  borsh.u64('discriminator'),
   borsh.u64('decay_after'),
   borsh.publicKey('admin'),
   borsh.str('symbol'),
 ]);
 export const MemberInfoAccountSchema = borsh.struct([
+  borsh.u64('discriminator'),
   borsh.publicKey('member'),
   borsh.u64('max'),
   borsh.u8('status'),
 ]);
 export const FullMemberInfoAccountSchema = borsh.struct([
+  borsh.u64('discriminator'),
   borsh.publicKey('community'),
   borsh.publicKey('member'),
   borsh.u64('max'),
   borsh.u8('status'),
 ]);
 export const BagInfoSchema = borsh.struct([
+  borsh.u64('discriminator'),
   borsh.u64('amount'),
   borsh.u64('decayAt'),
 ]);
 export const MemoSchema = borsh.struct([
+  borsh.u64('discriminator'),
   borsh.publicKey('community'),
   borsh.publicKey('from'),
   borsh.publicKey('to'),
