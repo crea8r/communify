@@ -1,0 +1,33 @@
+{
+  "name": "communify",
+  "version": "1.0.0",
+  "description": "Access to the Communify at Pha5A3BB4xKRZDs8ycvukFUagaKvk3AQBaH3J5qwAok",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "/dist"
+  ],
+  "scripts": {
+    "test": "tsc && mocha --require ts-node/register tests/**/*.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/crea8r/communify.git"
+  },
+  "keywords": [
+    "communify",
+    "solana",
+    "blockchain"
+  ],
+  "author": "k2",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/crea8r/communify/issues"
+  },
+  "homepage": "https://github.com/crea8r/communify#readme",
+  "dependencies": {
+    "@coral-xyz/anchor": "^0.30.1",
+    "@coral-xyz/borsh": "^0.30.1",
+    "@solana/web3.js": "^1.93.4"
+  }
+}

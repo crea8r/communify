@@ -3,6 +3,7 @@ import * as bip39 from 'bip39';
 import * as anchor from '@coral-xyz/anchor';
 import getConnection from '../config/connection';
 import { CommunityAccountSchema } from './_schemas';
+import getRenter from './_renter';
 
 const createCommunity = async (
   mnemonic: string, // to sign the txn
@@ -11,7 +12,8 @@ const createCommunity = async (
 ) => {
   const seed = bip39.mnemonicToSeedSync(mnemonic).slice(0, 32);
   const admin = anchor.web3.Keypair.fromSeed(seed);
-  const program = getProgram(admin);
+  const renter = getRenter(admin.publicKey.toBase58(), undefined);
+  const program = getProgram(renter);
   const connection = getConnection();
   const rand = anchor.web3.Keypair.generate();
   const communityAccount = anchor.web3.PublicKey.findProgramAddressSync(
@@ -22,12 +24,13 @@ const createCommunity = async (
     admin: admin.publicKey,
     random: rand.publicKey,
     communityAccount,
+    renter: renter.publicKey,
   };
   try {
     await program.methods
       .create(symbol, new anchor.BN(expire))
       .accounts(accounts)
-      .signers([admin])
+      .signers([admin, renter])
       .rpc();
     const rs = await connection.getAccountInfo(communityAccount);
     return {

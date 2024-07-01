@@ -1,20 +1,26 @@
 import { Telegraf } from 'telegraf';
-import createMnemonic from '../_lib/createMnemonic';
+import getMnemonic from '../_lib/getMnemonic';
 import getSession from '../_lib/session/get';
 import isAdmin from '../_lib/isAdmin';
 import getCommunity from '../../services/getCommunity';
 import { Session } from '../_type';
 import createCommunity from '../../services/createCommunity';
 import * as anchor from '@coral-xyz/anchor';
+import upsertCommunityTelegram from '../../services/upsertCommunityTelegram';
 
 const extractPayload = (payload: string) => {
   const tokens = payload.split(' ');
   const symbol = tokens[0];
   const expire = tokens[1];
+  const override = tokens[2];
   if (!symbol || !expire || !parseInt(expire)) {
     return null;
   }
-  return { symbol, expire: parseInt(expire) };
+  return {
+    symbol,
+    expire: parseInt(expire),
+    override: override === 'override',
+  };
 };
 
 // perform in the group chat
@@ -30,7 +36,7 @@ const register = async (ctx: any, bot: Telegraf) => {
     );
   }
   // check if username has a mnemonic in database, create one if not
-  const mnemonic = await createMnemonic(username);
+  const mnemonic = await getMnemonic(username);
   // check if he already /start, if not, ask him to /start (to get the private chat group_id)
   const session: Session = await getSession(username);
   if (!session) {
@@ -44,30 +50,53 @@ const register = async (ctx: any, bot: Telegraf) => {
     });
   }
   // check if this community is already registered, if so, return
-  const community = await getCommunity(session.chat_id);
+  const chat_id = ctx.update.message.chat.id;
+  const community = await getCommunity(chat_id);
+  const decay_after_days = community.decay_after / (24 * 60 * 60);
   if (community) {
-    return ctx.reply('This community is already registered.');
+    if (extractedPayload.override) {
+    } else {
+      return ctx.reply(
+        'This community is already registered. Point name is ' +
+          community.symbol +
+          ', expire period is ' +
+          decay_after_days +
+          ' days.'
+      );
+    }
   } else {
     const { data, error } = await createCommunity(
       mnemonic,
       extractedPayload.symbol,
-      extractedPayload.expire
+      extractedPayload.expire * 24 * 60 * 60
     );
     if (!data) {
       return ctx.reply(error);
-    }
-    return ctx.reply(
-      'Community registered successfully. Community detail is [here](' +
-        process.env.SOLANA_EXPLORER_URL +
-        '/address/' +
-        (data.publicKey as anchor.web3.PublicKey).toBase58() +
-        '?cluster=' +
-        process.env.SOLANA_CLUSTER +
-        ')',
-      {
-        parse_mode: 'Markdown',
+    } else {
+      const communityAccount = data.publicKey as anchor.web3.PublicKey;
+      const upsertSucceed = await upsertCommunityTelegram({
+        adminUserName: username,
+        adminMnemonic: mnemonic,
+        chatId: chat_id,
+        communityAccount,
+      });
+      if (upsertSucceed) {
+        return ctx.reply(
+          'Community registered successfully. Community detail is [here](' +
+            process.env.SOLANA_EXPLORER_URL +
+            '/address/' +
+            (data.publicKey as anchor.web3.PublicKey).toBase58() +
+            '?cluster=' +
+            process.env.SOLANA_CLUSTER +
+            ')',
+          {
+            parse_mode: 'Markdown',
+          }
+        );
+      } else {
+        return ctx.reply('Error registering community. Try again.');
       }
-    );
+    }
   }
 };
 

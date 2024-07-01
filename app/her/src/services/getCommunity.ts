@@ -9,6 +9,7 @@ import getConnection from '../config/connection';
 import * as anchor from '@coral-xyz/anchor';
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes';
 import { TelegramCommunityAccountSchema } from './_schemas';
+import { publicKey } from '@coral-xyz/borsh';
 
 const getCommunity = async (chat_id: string) => {
   // filter the blockchain for the community
@@ -40,7 +41,9 @@ const getCommunity = async (chat_id: string) => {
         ],
       }
     );
+    console.log('telegramCommunities: ', telegramCommunities);
     if (telegramCommunities.length === 0) {
+      console.log('no telegramCommunities found');
       return false;
     } else {
       const telegramCommunityData = TelegramCommunityAccountSchema.decode(
@@ -49,7 +52,11 @@ const getCommunity = async (chat_id: string) => {
       const info = await connection.getAccountInfo(
         telegramCommunityData.community
       );
-      return CommunityAccountSchema.decode(info.data);
+      console.log('community info: ', CommunityAccountSchema.decode(info.data));
+      return {
+        ...CommunityAccountSchema.decode(info.data),
+        publicKey: telegramCommunityData.community,
+      };
     }
   } catch (e) {
     return false;
